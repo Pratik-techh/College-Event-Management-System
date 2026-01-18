@@ -6,6 +6,20 @@ A modern, feature-rich web application for managing college events built with Dj
 ![Django](https://img.shields.io/badge/Django-5.1+-green.svg)
 ![License](https://img.shields.io/badge/License-MIT-yellow.svg)
 
+## 📸 Screenshots
+
+### Hero Section
+![Hero Section](screenshots/hero_section.png)
+*Modern landing page with premium UI and smooth animations*
+
+### Featured Events
+![Events Section](screenshots/events_section.png)
+*Browse and register for upcoming college events*
+
+### Full Homepage Preview
+![Full Homepage](screenshots/full_homepage.png)
+*Complete view of the application's main page*
+
 ## ✨ Features
 
 ### 🎯 Core Functionality
@@ -49,7 +63,7 @@ A modern, feature-rich web application for managing college events built with Dj
 
 ### 1. Clone the Repository
 ```bash
-git clone https://github.com/YOUR-USERNAME/College-Event-Management-System.git
+git clone https://github.com/Pratik-techh/College-Event-Management-System.git
 cd College-Event-Management-System
 ```
 
@@ -162,7 +176,7 @@ This project is licensed under the MIT License - see the LICENSE file for detail
 
 ## 👤 Author
 
-Your Name - [GitHub Profile](https://github.com/YOUR-USERNAME)
+Pratik-techh - [GitHub Profile](https://github.com/Pratik-techh)
 
 ## 🙏 Acknowledgments
 
@@ -173,7 +187,7 @@ Your Name - [GitHub Profile](https://github.com/YOUR-USERNAME)
 
 ## 📧 Contact
 
-For any queries or suggestions, please open an issue or contact at: your.email@example.com
+For any queries or suggestions, please open an issue or contact at: pratikmandolikar12@gmail.com
 
 ---
 
