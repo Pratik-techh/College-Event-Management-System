@@ -8,7 +8,7 @@ A modern, feature-rich web application for managing college events built with Dj
 
 ## 📸 Screenshots
 
-### Hero Section
+### Home Section
 ![Home Page](screenshots/homepage.png)
 *Modern landing page with premium UI and smooth animations*
 
