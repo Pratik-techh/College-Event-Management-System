@@ -13,12 +13,10 @@ A modern, feature-rich web application for managing college events built with Dj
 *Modern landing page with premium UI and smooth animations*
 
 ### Featured Events
-![Events Section](screenshots/events_section.png)
+![Events Section](screenshots/featured_events.png)
 *Browse and register for upcoming college events*
 
-### Full Homepage Preview
-![Full Homepage](screenshots/full_homepage.png)
-*Complete view of the application's main page*
+
 
 ## ✨ Features
 
