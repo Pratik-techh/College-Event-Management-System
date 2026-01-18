@@ -16,7 +16,9 @@ A modern, feature-rich web application for managing college events built with Dj
 ![Events Section](screenshots/featured_events.png)
 *Browse and register for upcoming college events*
 
-
+### Completed Events
+![Completed Events](screenshots/completed_events.png)
+*View past events that have been successfully completed*
 
 ## ✨ Features
 
