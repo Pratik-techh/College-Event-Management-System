@@ -20,14 +20,6 @@ A modern, feature-rich web application for managing college events built with Dj
 ![Completed Events](screenshots/completed_events.png)
 *View past events that have been successfully completed*
 
-### Admin Panel
-![Admin Panel](screenshots/admin_panel.png)
-*Comprehensive admin dashboard for managing events, registrations, and ticket scanning*
-
-### Admin Navigation
-![Admin Navigation](screenshots/admin_navigation.png)
-*Easy-to-use navigation menu for accessing event management, registrations, and ticket scanner*
-
 ## ✨ Features
 
 ### 🎯 Core Functionality
