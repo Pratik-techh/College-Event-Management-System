@@ -43,7 +43,8 @@ campus activities.{% endblock %}
                 </div>
             </div>
             <div class="col-lg-6 mt-5 mt-lg-0 position-relative" data-aos="fade-left" data-aos-delay="200">
-                <div class="hero-image-wrapper">
+                <div class="hero-image-wrapper" data-tilt data-tilt-max="10" data-tilt-speed="400"
+                    data-tilt-perspective="1000">
                     <div class="hero-image-glow-backdrop"></div>
                     <img src="{% static 'events/premium-students.png' %}" alt="Students at college events"
                         class="img-fluid hero-image-premium">
@@ -82,7 +83,9 @@ campus activities.{% endblock %}
             <!-- Upcoming Events Card -->
             <div class="col-md-6 col-lg-3 mb-4" data-aos="fade-up" data-aos-delay="100">
                 <a href="{% url 'event_list' %}" style="text-decoration:none;">
-                    <div class="premium-glass-card shadow-hover" style="padding:40px 28px; text-align:center;">
+                    <div class="premium-glass-card shadow-hover" data-tilt data-tilt-max="15" data-tilt-speed="400"
+                        data-tilt-glare="true" data-tilt-max-glare="0.2"
+                        style="padding:40px 28px; text-align:center; transform-style: preserve-3d;">
                         <div
                             style="width:70px;height:70px;background:linear-gradient(135deg,#6366f1,#818cf8);border-radius:20px;display:flex;align-items:center;justify-content:center;margin:0 auto 20px; box-shadow:0 10px 20px rgba(99,102,241,0.2);">
                             <i class="fas fa-calendar-alt" style="font-size:28px;color:#fff;"></i>
@@ -100,7 +103,9 @@ campus activities.{% endblock %}
             <!-- Completed Events Card -->
             <div class="col-md-6 col-lg-3 mb-4" data-aos="fade-up" data-aos-delay="150">
                 <a href="{% url 'completed_events' %}" style="text-decoration:none;">
-                    <div class="premium-glass-card shadow-hover" style="padding:40px 28px; text-align:center;">
+                    <div class="premium-glass-card shadow-hover" data-tilt data-tilt-max="15" data-tilt-speed="400"
+                        data-tilt-glare="true" data-tilt-max-glare="0.2"
+                        style="padding:40px 28px; text-align:center; transform-style: preserve-3d;">
                         <div
                             style="width:70px;height:70px;background:linear-gradient(135deg,#10b981,#34d399);border-radius:20px;display:flex;align-items:center;justify-content:center;margin:0 auto 20px; box-shadow:0 10px 20px rgba(16,185,129,0.2);">
                             <i class="fas fa-check-circle" style="font-size:28px;color:#fff;"></i>
@@ -118,7 +123,9 @@ campus activities.{% endblock %}
             <!-- About Card -->
             <div class="col-md-6 col-lg-3 mb-4" data-aos="fade-up" data-aos-delay="200">
                 <a href="{% url 'about' %}" style="text-decoration:none;">
-                    <div class="premium-glass-card shadow-hover" style="padding:40px 28px; text-align:center;">
+                    <div class="premium-glass-card shadow-hover" data-tilt data-tilt-max="15" data-tilt-speed="400"
+                        data-tilt-glare="true" data-tilt-max-glare="0.2"
+                        style="padding:40px 28px; text-align:center; transform-style: preserve-3d;">
                         <div
                             style="width:70px;height:70px;background:linear-gradient(135deg,#f59e0b,#fcd34d);border-radius:20px;display:flex;align-items:center;justify-content:center;margin:0 auto 20px; box-shadow:0 10px 20px rgba(245,158,11,0.2);">
                             <i class="fas fa-info-circle" style="font-size:28px;color:#fff;"></i>
@@ -136,7 +143,9 @@ campus activities.{% endblock %}
             <!-- Contact Card -->
             <div class="col-md-6 col-lg-3 mb-4" data-aos="fade-up" data-aos-delay="250">
                 <a href="{% url 'contact' %}" style="text-decoration:none;">
-                    <div class="premium-glass-card shadow-hover" style="padding:40px 28px; text-align:center;">
+                    <div class="premium-glass-card shadow-hover" data-tilt data-tilt-max="15" data-tilt-speed="400"
+                        data-tilt-glare="true" data-tilt-max-glare="0.2"
+                        style="padding:40px 28px; text-align:center; transform-style: preserve-3d;">
                         <div
                             style="width:70px;height:70px;background:linear-gradient(135deg,#ec4899,#f472b6);border-radius:20px;display:flex;align-items:center;justify-content:center;margin:0 auto 20px; box-shadow:0 10px 20px rgba(236,72,153,0.2);">
                             <i class="fas fa-envelope" style="font-size:28px;color:#fff;"></i>
@@ -214,12 +223,13 @@ campus activities.{% endblock %}
         </div>
         <div class="row mt-5 justify-content-center">
             <div class="col-md-4 mb-4" data-aos="fade-up" data-aos-delay="100">
-                <div class="feature-card premium-glass-card hover-lift text-center"
-                    style="padding: 40px 30px; height: 100%;">
+                <div class="feature-card premium-glass-card hover-lift text-center" data-tilt data-tilt-max="10"
+                    data-tilt-speed="400" data-tilt-perspective="1000"
+                    style="padding: 40px 30px; height: 100%; transform-style: preserve-3d;">
                     <div class="feature-icon-wrapper mb-4 mx-auto"
                         style="width: 80px; height: 80px; background: linear-gradient(135deg, rgba(99,102,241,0.1), rgba(236,72,153,0.1)); border-radius: 24px; display: flex; align-items: center; justify-content: center;">
                         <i class="fas fa-ticket-alt"
-                            style="font-size: 32px; background: var(--gradient-brand); -webkit-background-clip: text; -webkit-text-fill-color: transparent;"></i>
+                            style="font-size: 32px; background: var(--gradient-brand); -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent;"></i>
                     </div>
                     <h3
                         style="font-family: 'Outfit', sans-serif; font-weight: 700; margin-bottom: 15px; font-size: 22px;">
@@ -230,8 +240,9 @@ campus activities.{% endblock %}
                 </div>
             </div>
             <div class="col-md-4 mb-4" data-aos="fade-up" data-aos-delay="200">
-                <div class="feature-card premium-glass-card hover-lift text-center shadow-lg"
-                    style="padding: 40px 30px; height: 100%; transform: translateY(-15px); border: 1px solid rgba(99,102,241,0.3);">
+                <div class="feature-card premium-glass-card hover-lift text-center shadow-lg" data-tilt
+                    data-tilt-max="10" data-tilt-speed="400" data-tilt-perspective="1000"
+                    style="padding: 40px 30px; height: 100%; transform: translateY(-15px); border: 1px solid rgba(99,102,241,0.3); transform-style: preserve-3d;">
                     <div class="feature-icon-wrapper mb-4 mx-auto"
                         style="width: 80px; height: 80px; background: linear-gradient(135deg, rgba(16,185,129,0.1), rgba(52,211,153,0.1)); border-radius: 24px; display: flex; align-items: center; justify-content: center;">
                         <i class="fas fa-bell" style="font-size: 32px; color: #10b981;"></i>
@@ -244,8 +255,9 @@ campus activities.{% endblock %}
                 </div>
             </div>
             <div class="col-md-4 mb-4" data-aos="fade-up" data-aos-delay="300">
-                <div class="feature-card premium-glass-card hover-lift text-center"
-                    style="padding: 40px 30px; height: 100%;">
+                <div class="feature-card premium-glass-card hover-lift text-center" data-tilt data-tilt-max="10"
+                    data-tilt-speed="400" data-tilt-perspective="1000"
+                    style="padding: 40px 30px; height: 100%; transform-style: preserve-3d;">
                     <div class="feature-icon-wrapper mb-4 mx-auto"
                         style="width: 80px; height: 80px; background: linear-gradient(135deg, rgba(245,158,11,0.1), rgba(252,211,77,0.1)); border-radius: 24px; display: flex; align-items: center; justify-content: center;">
                         <i class="fas fa-users" style="font-size: 32px; color: #f59e0b;"></i>
@@ -261,5 +273,20 @@ campus activities.{% endblock %}
         </div>
     </div>
 </section>
+{% endblock %}
 
+{% block extra_js %}
+<!-- Vanilla Tilt JS for stunning 3D hover effects -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/vanilla-tilt/1.8.0/vanilla-tilt.min.js"
+    integrity="sha512-RX/OFugIG/bWtx037R/YvpA1O52iEqNItiRVZ3E1kO09O1B/7j5ssp1xY6X1b0B9p0iX1H/3I7T0XgN1VqDQA=="
+    crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+<script>
+    // Parallax sub-elements for deeper 3D effect
+    document.querySelectorAll('.premium-glass-card i, .premium-glass-card .feature-icon-wrapper').forEach(el => {
+        el.style.transform = "translateZ(30px)";
+    });
+    document.querySelectorAll('.premium-glass-card h5, .premium-glass-card h3').forEach(el => {
+        el.style.transform = "translateZ(20px)";
+    });
+</script>
 {% endblock %}
