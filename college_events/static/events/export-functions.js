@@ -21,6 +21,7 @@ function exportToExcel() {
 
     Object.entries(groupedRegistrations).forEach(([eventName, eventRegistrations]) => {
         const wsData = eventRegistrations.map(reg => ({
+            'Ticket ID': reg.ticket_id,
             'Student Name': reg.name,
             'Email': reg.email,
             'Course': reg.course,
@@ -92,6 +93,7 @@ function exportToPDF() {
             yOffset += 8;
 
             const columns = [
+                { header: 'Ticket ID', dataKey: 'ticket_id' },
                 { header: 'Name', dataKey: 'name' },
                 { header: 'Email', dataKey: 'email' },
                 { header: 'Course', dataKey: 'course' },
@@ -101,6 +103,7 @@ function exportToPDF() {
             ];
 
             const data = group.registrations.map(reg => ({
+                ticket_id: reg.ticket_id,
                 name: reg.name,
                 email: reg.email,
                 course: reg.course,

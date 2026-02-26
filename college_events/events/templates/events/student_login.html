@@ -1,0 +1,246 @@
+{% extends 'events/base.html' %}
+{% load static %}
+{% block title %}Student Login — CollegeEvents{% endblock %}
+
+{% block extra_css %}
+<style>
+    .auth-wrapper {
+        min-height: 100vh;
+        background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 50%, #ec4899 100%);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 100px 16px 60px;
+    }
+
+    .auth-card {
+        background: #fff;
+        border-radius: 28px;
+        box-shadow: 0 30px 80px rgba(0, 0, 0, 0.18);
+        padding: 52px 48px;
+        width: 100%;
+        max-width: 440px;
+        animation: slideUp 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    @keyframes slideUp {
+        from {
+            opacity: 0;
+            transform: translateY(30px);
+        }
+
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+
+    .auth-logo {
+        font-family: 'Outfit', sans-serif;
+        font-size: 30px;
+        font-weight: 900;
+        background: linear-gradient(135deg, #6366f1, #ec4899);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        text-align: center;
+        margin-bottom: 8px;
+    }
+
+    .auth-subtitle {
+        text-align: center;
+        color: #64748b;
+        font-size: 15px;
+        margin-bottom: 36px;
+    }
+
+    .form-group {
+        margin-bottom: 20px;
+    }
+
+    .form-group label {
+        display: block;
+        font-weight: 600;
+        font-size: 13px;
+        color: #374151;
+        margin-bottom: 7px;
+        letter-spacing: 0.3px;
+    }
+
+    .form-group input {
+        width: 100%;
+        padding: 14px 18px;
+        border: 2px solid #e5e7eb;
+        border-radius: 12px;
+        font-family: 'Inter', sans-serif;
+        font-size: 15px;
+        color: #0f172a;
+        transition: border-color 0.2s, box-shadow 0.2s;
+        outline: none;
+        background: #f9fafb;
+    }
+
+    .form-group input:focus {
+        border-color: #6366f1;
+        box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.12);
+        background: #fff;
+    }
+
+    .btn-login {
+        width: 100%;
+        padding: 15px;
+        background: linear-gradient(135deg, #6366f1, #ec4899);
+        color: #fff;
+        font-weight: 700;
+        font-size: 16px;
+        border: none;
+        border-radius: 50px;
+        cursor: pointer;
+        transition: all 0.3s;
+        margin-top: 4px;
+        letter-spacing: 0.3px;
+    }
+
+    .btn-login:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 12px 36px rgba(99, 102, 241, 0.4);
+    }
+
+    .auth-links {
+        text-align: center;
+        margin-top: 22px;
+        font-size: 14px;
+        color: #64748b;
+        line-height: 2;
+    }
+
+    .auth-links a {
+        color: #6366f1;
+        font-weight: 600;
+        text-decoration: none;
+    }
+
+    .auth-links a:hover {
+        text-decoration: underline;
+    }
+
+    .divider {
+        text-align: center;
+        color: #9ca3af;
+        font-size: 13px;
+        margin: 20px 0;
+        position: relative;
+    }
+
+    .divider::before,
+    .divider::after {
+        content: '';
+        position: absolute;
+        top: 50%;
+        width: 40%;
+        height: 1px;
+        background: #e5e7eb;
+    }
+
+    .divider::before {
+        left: 0;
+    }
+
+    .divider::after {
+        right: 0;
+    }
+
+    /* Theme Adaptive Overrides */
+    html[data-theme="dark"] .auth-card,
+    html[data-theme="midnight"] .auth-card,
+    html[data-theme="forest"] .auth-card {
+        background: rgba(30, 41, 59, 0.7);
+        backdrop-filter: blur(12px);
+        border: 1px solid rgba(99, 102, 241, 0.2);
+    }
+
+    html[data-theme="dark"] .form-group label,
+    html[data-theme="midnight"] .form-group label,
+    html[data-theme="forest"] .form-group label {
+        color: #e2e8f0;
+    }
+
+    html[data-theme="dark"] .form-group input,
+    html[data-theme="midnight"] .form-group input,
+    html[data-theme="forest"] .form-group input {
+        background: #0f172a;
+        border-color: rgba(99, 102, 241, 0.3);
+        color: #f1f5f9;
+    }
+
+    html[data-theme="dark"] .auth-subtitle,
+    html[data-theme="midnight"] .auth-subtitle,
+    html[data-theme="forest"] .auth-subtitle,
+    html[data-theme="dark"] .auth-links,
+    html[data-theme="midnight"] .auth-links,
+    html[data-theme="forest"] .auth-links {
+        color: #94a3b8;
+    }
+
+    html[data-theme="dark"] .divider,
+    html[data-theme="midnight"] .divider,
+    html[data-theme="forest"] .divider {
+        color: #64748b;
+    }
+
+    html[data-theme="dark"] .divider::before,
+    html[data-theme="midnight"] .divider::before,
+    html[data-theme="forest"] .divider::before,
+    html[data-theme="dark"] .divider::after,
+    html[data-theme="midnight"] .divider::after,
+    html[data-theme="forest"] .divider::after {
+        background: #334155;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="auth-wrapper">
+    <div class="auth-card">
+        <div class="auth-logo">🎓 CollegeEvents</div>
+        <p class="auth-subtitle">Sign in to your student account</p>
+
+        {% if messages %}
+        <div style="margin-bottom:20px;">
+            {% for msg in messages %}
+            <div style="background:{% if msg.tags == 'error' %}#fef2f2{% else %}#f0fdf4{% endif %};
+                         color:{% if msg.tags == 'error' %}#b91c1c{% else %}#15803d{% endif %};
+                         padding:12px 16px; border-radius:10px; margin-bottom:8px;
+                         font-size:14px; font-weight:500;
+                         border-left:4px solid {% if msg.tags == 'error' %}#ef4444{% else %}#22c55e{% endif %};">
+                {{ msg }}
+            </div>
+            {% endfor %}
+        </div>
+        {% endif %}
+
+        <form method="POST"
+            action="{% url 'student_login' %}{% if request.GET.next %}?next={{ request.GET.next }}{% endif %}">
+            {% csrf_token %}
+            <div class="form-group">
+                <label>Username or Email</label>
+                <input type="text" name="username" placeholder="Enter your username" required autofocus
+                    value="{{ request.POST.username }}">
+            </div>
+            <div class="form-group">
+                <label>Password</label>
+                <input type="password" name="password" placeholder="Enter your password" required>
+            </div>
+            <button type="submit" class="btn-login">🔐 Sign In</button>
+        </form>
+
+        <div class="divider">or</div>
+
+        <div class="auth-links">
+            <div>Don't have an account? <a href="{% url 'student_signup' %}">Create one free →</a></div>
+            <div style="margin-top:4px; font-size:12px;">
+                Are you an admin? <a href="{% url 'admin_login' %}">Admin login</a>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,507 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}CollegeEvents{% endblock %}</title>
+    <meta name="description"
+        content="{% block meta_description %}College Event Management System — discover, register, and attend exciting college events.{% endblock %}">
+
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+    <!-- AOS Animation -->
+    <link rel="stylesheet" href="https://unpkg.com/aos@next/dist/aos.css">
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Outfit:wght@400;600;700;800;900&display=swap"
+        rel="stylesheet">
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="{% static 'events/styles.css' %}">
+
+    <style>
+        /* ── Active Nav Link ─────────────────────────────────── */
+        .nav-link.active-page {
+            color: var(--primary-color) !important;
+        }
+
+        .nav-link.active-page::before {
+            width: 100% !important;
+        }
+
+        /* ── Toast Notifications ─────────────────────────────── */
+        #toast-container {
+            position: fixed;
+            bottom: 28px;
+            right: 28px;
+            z-index: 99999;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .toast-msg {
+            min-width: 300px;
+            max-width: 380px;
+            padding: 16px 20px;
+            border-radius: 16px;
+            font-weight: 600;
+            font-size: 14px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.14);
+            animation: toastIn 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+            color: #fff;
+        }
+
+        .toast-msg.success {
+            background: linear-gradient(135deg, #10b981, #059669);
+        }
+
+        .toast-msg.error {
+            background: linear-gradient(135deg, #ef4444, #dc2626);
+        }
+
+        .toast-msg.info {
+            background: linear-gradient(135deg, #6366f1, #4f46e5);
+        }
+
+        @keyframes toastIn {
+            from {
+                opacity: 0;
+                transform: translateX(80px) scale(0.9);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateX(0) scale(1);
+            }
+        }
+
+        /* ── Page-hero banner (non-homepage pages) ──────────── */
+        .page-hero {
+            background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 50%, #ec4899 100%);
+            background-size: 300% 300%;
+            animation: gradientFlow 10s ease infinite;
+            padding: 120px 0 60px;
+            text-align: center;
+            color: #fff;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .page-hero::after {
+            content: '';
+            position: absolute;
+            bottom: -2px;
+            left: 0;
+            right: 0;
+            height: 60px;
+            background: var(--light-color);
+            clip-path: polygon(0 100%, 100% 0%, 100% 100%);
+        }
+
+        .page-hero h1 {
+            font-family: 'Outfit', sans-serif;
+            font-size: 48px;
+            font-weight: 900;
+            margin-bottom: 12px;
+            letter-spacing: -1px;
+        }
+
+        .page-hero p {
+            font-size: 18px;
+            opacity: 0.9;
+        }
+
+        /* ── Responsive Navbar Admin link ──────────────────── */
+        .nav-admin-link {
+            background: linear-gradient(135deg, #6366f1, #ec4899);
+            color: #fff !important;
+            padding: 8px 22px !important;
+            border-radius: 50px;
+            font-weight: 700 !important;
+            font-size: 14px;
+            margin-left: 8px;
+            transition: all 0.3s ease;
+        }
+
+        .nav-admin-link:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 24px rgba(99, 102, 241, 0.35);
+            opacity: 0.95;
+        }
+
+        .nav-admin-link::before {
+            display: none !important;
+        }
+    </style>
+
+    {% block extra_css %}{% endblock %}
+</head>
+
+<body data-user-auth="{{ request.user.is_authenticated|yesno:'true,false' }}"
+    data-user-staff="{{ request.user.is_staff|yesno:'true,false' }}">
+
+    <!-- ══════════════ NAVBAR ══════════════ -->
+    <nav class="navbar navbar-expand-lg navbar-light fixed-top">
+        <div class="container">
+            <a class="navbar-brand" href="{% url 'homepage' %}">College<span>Events</span></a>
+            <!-- Animated Hamburger -->
+            <button class="navbar-toggler hamburger-btn" type="button" data-toggle="collapse" data-target="#mainNav"
+                aria-controls="mainNav" aria-expanded="false" aria-label="Toggle navigation" id="hamburgerBtn">
+                <span class="hamburger-bar"></span>
+                <span class="hamburger-bar"></span>
+                <span class="hamburger-bar"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="mainNav">
+                <ul class="navbar-nav ml-auto align-items-center">
+                    <li class="nav-item">
+                        <a class="nav-link {% if request.resolver_match.url_name == 'homepage' %}active-page{% endif %}"
+                            href="{% url 'homepage' %}">Home</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link {% if request.resolver_match.url_name == 'event_list' %}active-page{% endif %}"
+                            href="{% url 'event_list' %}">
+                            <i class="fas fa-calendar-alt mr-1"></i> Events
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link {% if request.resolver_match.url_name == 'completed_events' %}active-page{% endif %}"
+                            href="{% url 'completed_events' %}">
+                            <i class="fas fa-check-circle mr-1"></i> Past Events
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link {% if request.resolver_match.url_name == 'about' %}active-page{% endif %}"
+                            href="{% url 'about' %}">About</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link {% if request.resolver_match.url_name == 'contact' %}active-page{% endif %}"
+                            href="{% url 'contact' %}">Contact</a>
+                    </li>
+
+                    {% if request.user.is_authenticated %}
+                    <!-- Logged-in: show avatar + dropdown -->
+                    <li class="nav-item dropdown ml-2">
+                        <a href="#" class="nav-link dropdown-toggle d-flex align-items-center" id="userDropdown"
+                            data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" style="padding:4px 0;">
+                            <span class="user-avatar" id="navAvatar"
+                                style="width:38px;height:38px;border-radius:50%;background:linear-gradient(135deg,#6366f1,#ec4899);color:#fff;font-weight:800;font-size:14px;display:flex;align-items:center;justify-content:center;border:2px solid rgba(255,255,255,0.3);box-shadow:0 4px 12px rgba(99,102,241,0.3);">
+
+                                {% if request.user.first_name %}
+                                {{ request.user.first_name|slice:":1"|upper }}{{ request.user.last_name|slice:":1"|upper
+                                }}
+                                {% else %}
+                                {{ request.user.username|slice:":2"|upper }}
+                                {% endif %}
+
+                            </span>
+
+                            <span style="margin-left:8px;font-weight:600;font-size:14px;">
+
+                                {% if request.user.first_name %}
+                                {{ request.user.first_name }}
+                                {% else %}
+                                {{ request.user.username }}
+                                {% endif %}
+
+                            </span>
+
+                        </a>
+                        <div class="dropdown-menu dropdown-menu-right" style="border-radius:16px;border:none;box-shadow:0 16px 48px rgba(0,0,0,0.14);
+                                    padding:8px;min-width:200px;margin-top:8px;">
+                            <a class="dropdown-item" href="{% url 'student_dashboard' %}"
+                                style="border-radius:10px;padding:10px 14px;font-weight:600;">
+                                <i class="fas fa-th-large mr-2" style="color:#6366f1;"></i> My Dashboard
+                            </a>
+                            <a class="dropdown-item" href="{% url 'event_list' %}"
+                                style="border-radius:10px;padding:10px 14px;font-weight:600;">
+                                <i class="fas fa-ticket-alt mr-2" style="color:#10b981;"></i> Browse Events
+                            </a>
+                            <div class="dropdown-divider" style="margin:6px 0;border-color:#e2e8f0;"></div>
+                            {% if request.user.is_staff %}
+                            <a class="dropdown-item" href="{% url 'admin_panel' %}"
+                                style="border-radius:10px;padding:10px 14px;font-weight:600;">
+                                <i class="fas fa-cog mr-2" style="color:#f59e0b;"></i> Admin Panel
+                            </a>
+                            {% endif %}
+                            <a class="dropdown-item" href="{% url 'student_logout' %}"
+                                style="border-radius:10px;padding:10px 14px;font-weight:600;color:#ef4444;"
+                                onclick="return confirm('Sign out?')">
+                                <i class="fas fa-sign-out-alt mr-2"></i> Sign Out
+                            </a>
+                        </div>
+                    </li>
+                    {% else %}
+                    <!-- Guest: Login + Sign Up -->
+                    <li class="nav-item ml-2">
+                        <a class="nav-link" href="{% url 'student_login' %}"
+                            style="font-weight:600;color:#6366f1 !important;">
+                            <i class="fas fa-sign-in-alt mr-1"></i> Login
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link nav-admin-link" href="{% url 'student_signup' %}">
+                            <i class="fas fa-user-plus mr-1"></i> Sign Up
+                        </a>
+                    </li>
+                    <li class="nav-item ml-1">
+                        <a href="{% url 'admin_login' %}" style="color:#94a3b8;font-size:13px;padding:6px 10px;
+                                  text-decoration:none;font-weight:500;">
+                            Admin
+                        </a>
+                    </li>
+                    {% endif %}
+
+                    <!-- Theme Selection Dropdown -->
+                    <li class="nav-item dropdown ml-1">
+                        <button class="theme-toggle" id="themeToggle" data-toggle="dropdown" aria-haspopup="true"
+                            aria-expanded="false" title="Switch Theme">
+                            <span id="themeIcon">🌙</span>
+                        </button>
+                        <div class="dropdown-menu dropdown-menu-right theme-dropdown"
+                            style="border-radius:18px; border:none; box-shadow:0 10px 40px rgba(0,0,0,0.15); padding:10px; min-width:160px; margin-top:10px;">
+                            <h6 class="dropdown-header"
+                                style="font-weight:800; color:#64748b; font-size:11px; text-transform:uppercase; letter-spacing:1px; margin-bottom:5px;">
+                                Select Aesthetics</h6>
+                            <a class="dropdown-item theme-opt" href="#" data-theme="light"
+                                style="border-radius:10px; padding:10px 14px; font-weight:600; display:flex; align-items:center; gap:10px;">
+                                <span style="font-size:16px;">☀️</span> Light Mode
+                            </a>
+                            <a class="dropdown-item theme-opt" href="#" data-theme="dark"
+                                style="border-radius:10px; padding:10px 14px; font-weight:600; display:flex; align-items:center; gap:10px;">
+                                <span style="font-size:16px;">🌙</span> Dark Mode
+                            </a>
+                        </div>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <!-- ══ Page Progress Bar ══ -->
+    <div id="pageProgress" style="
+        position:fixed;top:0;left:0;height:3px;width:0%;z-index:9999;
+        background:linear-gradient(90deg,#6366f1,#ec4899,#8b5cf6);
+        transition:width 0.4s ease;
+        box-shadow:0 0 8px rgba(99,102,241,0.6);
+    "></div>
+
+    <!-- ══ Scroll-to-Top Button ══ -->
+    <button id="scrollTopBtn" onclick="window.scrollTo({top:0,behavior:'smooth'})" title="Back to top" style="position:fixed;bottom:28px;right:28px;z-index:999;
+               width:48px;height:48px;border-radius:50%;border:none;
+               background:linear-gradient(135deg,#6366f1,#ec4899);
+               color:#fff;font-size:18px;cursor:pointer;
+               box-shadow:0 8px 24px rgba(99,102,241,0.4);
+               opacity:0;transform:translateY(20px) scale(0.8);
+               transition:all 0.35s cubic-bezier(0.4,0,0.2,1);
+               display:flex;align-items:center;justify-content:center;">
+        &#8679;
+    </button>
+
+    {% if messages %}
+    <div id="django-messages" style="display:none;">
+        {% for msg in messages %}
+        <div class="msg" data-text="{{ msg|escapejs }}" data-tags="{{ msg.tags }}"></div>
+        {% endfor %}
+    </div>
+    <script>
+        window.__djangoMessages = Array.from(document.querySelectorAll('#django-messages .msg')).map(el => ({
+            text: el.dataset.text,
+            type: el.dataset.tags
+        }));
+    </script>
+    {% endif %}
+
+    <!-- ══════════════ PAGE CONTENT ══════════════ -->
+    {% block content %}{% endblock %}
+
+    <!-- ══════════════ FOOTER ══════════════ -->
+    <footer class="footer">
+        <div class="container">
+            <div class="row">
+                <div class="col-md-4 mb-4">
+                    <h3>College<span style="color:#ec4899">Events</span></h3>
+                    <p>Your one-stop destination for all college events, activities, and alumni connections.</p>
+                </div>
+                <div class="col-md-4 mb-4">
+                    <h5 style="color:#f1f5f9; font-weight:700; margin-bottom:20px;">Quick Links</h5>
+                    <ul style="list-style:none; padding:0;">
+                        <li style="margin-bottom:10px;"><a href="{% url 'homepage' %}"
+                                style="color:#94a3b8; text-decoration:none; transition:color 0.2s;"
+                                onmouseover="this.style.color='#818cf8'" onmouseout="this.style.color='#94a3b8'">🏠
+                                Home</a></li>
+                        <li style="margin-bottom:10px;"><a href="{% url 'event_list' %}"
+                                style="color:#94a3b8; text-decoration:none;" onmouseover="this.style.color='#818cf8'"
+                                onmouseout="this.style.color='#94a3b8'">📅 Upcoming Events</a></li>
+                        <li style="margin-bottom:10px;"><a href="{% url 'completed_events' %}"
+                                style="color:#94a3b8; text-decoration:none;" onmouseover="this.style.color='#818cf8'"
+                                onmouseout="this.style.color='#94a3b8'">✅ Completed Events</a></li>
+                        <li style="margin-bottom:10px;"><a href="{% url 'about' %}"
+                                style="color:#94a3b8; text-decoration:none;" onmouseover="this.style.color='#818cf8'"
+                                onmouseout="this.style.color='#94a3b8'">ℹ️ About</a></li>
+                        <li style="margin-bottom:10px;"><a href="{% url 'contact' %}"
+                                style="color:#94a3b8; text-decoration:none;" onmouseover="this.style.color='#818cf8'"
+                                onmouseout="this.style.color='#94a3b8'">📞 Contact</a></li>
+                    </ul>
+                </div>
+                <div class="col-md-4 mb-4 text-md-right">
+                    <h5 style="color:#f1f5f9; font-weight:700; margin-bottom:20px;">Follow Us</h5>
+                    <div class="social-links justify-content-md-end">
+                        <a href="#" title="Facebook"><i class="fab fa-facebook-f"></i></a>
+                        <a href="#" title="Instagram"><i class="fab fa-instagram"></i></a>
+                        <a href="#" title="Twitter"><i class="fab fa-twitter"></i></a>
+                        <a href="#" title="LinkedIn"><i class="fab fa-linkedin-in"></i></a>
+                    </div>
+                </div>
+                <hr style="border-color:rgba(255,255,255,0.1); margin:30px 0 20px;">
+                <div class="text-center">
+                    <p class="mb-0" style="color:#64748b; font-size:14px;">
+                        &copy; 2026 CollegeEvents. All rights reserved. &nbsp;|&nbsp;
+                        <a href="{% url 'admin_login' %}" style="color:#6366f1; text-decoration:none;">Admin Portal</a>
+                    </p>
+                </div>
+            </div>
+    </footer>
+
+    <!-- ══════════════ TOAST CONTAINER ══════════════ -->
+    <div id="toast-container"></div>
+
+    <!-- ══════════════ SCRIPTS ══════════════ -->
+    <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.4/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+    <script src="https://unpkg.com/aos@next/dist/aos.js"></script>
+
+    <script>
+        // Global auth state for JS
+        window.userLoggedIn = document.body.dataset.userAuth === 'true';
+        window.userIsStaff = document.body.dataset.userStaff === 'true';
+
+        // ── AOS Init ─────────────────────────────────────────
+        AOS.init({ duration: 750, once: true, offset: 80 });
+
+        // ── Toast System ─────────────────────────────────────
+        function showToast(message, type, duration) {
+            type = type || 'info';
+            duration = duration || 4000;
+            var icons = { success: '✅', error: '❌', info: 'ℹ️', warning: '⚠️' };
+            var toast = document.createElement('div');
+            toast.className = 'toast-msg ' + type;
+            toast.innerHTML = '<span style="font-size:18px">' + (icons[type] || icons.info) + '</span><span>' + message + '</span>';
+            document.getElementById('toast-container').appendChild(toast);
+            setTimeout(function () {
+                toast.style.transition = 'opacity 0.4s, transform 0.4s';
+                toast.style.opacity = '0';
+                toast.style.transform = 'translateX(80px)';
+                setTimeout(function () { toast.remove(); }, 400);
+            }, duration);
+        }
+
+        // ── Show Django messages as toasts ───────────────────
+        if (window.__djangoMessages) {
+            window.__djangoMessages.forEach(function (m) {
+                var type = m.type.indexOf('error') !== -1 ? 'error'
+                    : m.type.indexOf('success') !== -1 ? 'success' : 'info';
+                setTimeout(function () { showToast(m.text, type); }, 300);
+            });
+        }
+
+        // ── Advanced Theme Design System ────────────────────────
+        function applyTheme(theme) {
+            document.documentElement.setAttribute('data-theme', theme);
+            try { localStorage.setItem('ce-theme', theme); } catch (e) { }
+
+            var icons = { 'light': '☀️', 'dark': '🌙' };
+            var themeIcon = document.getElementById('themeIcon');
+            if (themeIcon) themeIcon.textContent = icons[theme] || '🌓';
+        }
+
+        // Init Theme
+        (function () {
+            var saved = '';
+            try { saved = localStorage.getItem('ce-theme') || ''; } catch (e) { }
+            if (['light', 'dark'].includes(saved)) {
+                applyTheme(saved);
+            } else if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
+                applyTheme('dark');
+            } else {
+                applyTheme('light');
+            }
+        })();
+
+        // Theme Switcher Events
+        document.querySelectorAll('.theme-opt').forEach(opt => {
+            opt.addEventListener('click', function (e) {
+                e.preventDefault();
+                var theme = this.getAttribute('data-theme');
+                applyTheme(theme);
+                showToast(`✨ Switched to ${theme.charAt(0).toUpperCase() + theme.slice(1)} Mode`, 'info', 2000);
+            });
+        });
+
+        // ── Countdown timer function (used by event_list page) ──
+        function startCountdown(elementId, eventDateStr) {
+            var el = document.getElementById(elementId);
+            if (!el) return;
+            function tick() {
+                var eventDate = new Date(eventDateStr + 'T00:00:00');
+                var now = new Date();
+                var diff = eventDate - now;
+                if (diff <= 0) {
+                    el.textContent = '🎉 Today!';
+                    el.className = 'event-countdown today';
+                    return;
+                }
+                var d = Math.floor(diff / 86400000);
+                var h = Math.floor((diff % 86400000) / 3600000);
+                var m = Math.floor((diff % 3600000) / 60000);
+                var isUrgent = d < 3;
+                el.className = 'event-countdown' + (isUrgent ? ' urgent' : '');
+                if (d > 0) {
+                    el.innerHTML = '⏳ ' + d + 'd ' + h + 'h left';
+                } else {
+                    el.innerHTML = '⏳ ' + h + 'h ' + m + 'm left';
+                }
+            }
+            tick();
+            setInterval(tick, 60000);
+        }
+
+        // ── Navbar scroll shadow ──────────────────────────────
+        window.addEventListener('scroll', function () {
+            var nav = document.querySelector('.navbar');
+            if (!nav) return;
+            if (window.scrollY > 50) {
+                nav.style.boxShadow = '0 8px 32px rgba(0,0,0,0.12)';
+                nav.style.padding = '12px 0';
+            } else {
+                nav.style.boxShadow = '0 8px 32px rgba(0,0,0,0.06)';
+                nav.style.padding = '20px 0';
+            }
+        });
+
+        // ── Keep Email Fields Editable ───────────────────────
+        function ensureEmailEditable() {
+            document.querySelectorAll('input[type="email"]').forEach(el => {
+                if (el.readOnly) el.readOnly = false;
+                if (el.hasAttribute('readonly')) el.removeAttribute('readonly');
+            });
+        }
+
+        // Run immediately and then observe for dynamic modals
+        ensureEmailEditable();
+        const observer = new MutationObserver(ensureEmailEditable);
+        observer.observe(document.body, { childList: true, subtree: true });
+    </script>
+
+    {% block extra_js %}{% endblock %}
+</body>
+
+</html>

@@ -1,0 +1,342 @@
+{% extends 'events/base.html' %}
+{% load static %}
+{% block title %}Create Account — CollegeEvents{% endblock %}
+
+{% block extra_css %}
+<style>
+    .auth-wrapper {
+        min-height: 100vh;
+        background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 50%, #ec4899 100%);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 100px 16px 60px;
+    }
+
+    .auth-card {
+        background: #fff;
+        border-radius: 28px;
+        box-shadow: 0 30px 80px rgba(0, 0, 0, 0.18);
+        padding: 48px 44px;
+        width: 100%;
+        max-width: 560px;
+        animation: slideUp 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    @keyframes slideUp {
+        from {
+            opacity: 0;
+            transform: translateY(30px);
+        }
+
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+
+    .auth-logo {
+        font-family: 'Outfit', sans-serif;
+        font-size: 28px;
+        font-weight: 900;
+        background: linear-gradient(135deg, #6366f1, #ec4899);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        text-align: center;
+        margin-bottom: 6px;
+    }
+
+    .auth-subtitle {
+        text-align: center;
+        color: #64748b;
+        font-size: 15px;
+        margin-bottom: 32px;
+    }
+
+    .form-row {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 14px;
+    }
+
+    .form-group {
+        margin-bottom: 18px;
+    }
+
+    .form-group label {
+        display: block;
+        font-weight: 600;
+        font-size: 13px;
+        color: #374151;
+        margin-bottom: 6px;
+        letter-spacing: 0.3px;
+    }
+
+    .form-group label .req {
+        color: #ef4444;
+        margin-left: 2px;
+    }
+
+    .form-group input,
+    .form-group select {
+        width: 100%;
+        padding: 12px 16px;
+        border: 2px solid #e5e7eb;
+        border-radius: 12px;
+        font-family: 'Inter', sans-serif;
+        font-size: 15px;
+        color: #0f172a;
+        transition: border-color 0.2s, box-shadow 0.2s;
+        outline: none;
+        background: #f9fafb;
+    }
+
+    .form-group input:focus,
+    .form-group select:focus {
+        border-color: #6366f1;
+        box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.12);
+        background: #fff;
+    }
+
+    .form-group select {
+        cursor: pointer;
+    }
+
+    .section-label {
+        font-size: 12px;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+        color: #9ca3af;
+        margin: 24px 0 14px;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+    }
+
+    .section-label::before,
+    .section-label::after {
+        content: '';
+        flex: 1;
+        height: 1px;
+        background: #e5e7eb;
+    }
+
+    .btn-signup {
+        width: 100%;
+        padding: 15px;
+        background: linear-gradient(135deg, #6366f1, #ec4899);
+        color: #fff;
+        font-weight: 700;
+        font-size: 16px;
+        border: none;
+        border-radius: 50px;
+        cursor: pointer;
+        transition: all 0.3s;
+        margin-top: 8px;
+        letter-spacing: 0.3px;
+    }
+
+    .btn-signup:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 12px 36px rgba(99, 102, 241, 0.4);
+    }
+
+    .login-link {
+        text-align: center;
+        margin-top: 20px;
+        font-size: 14px;
+        color: #64748b;
+    }
+
+    .login-link a {
+        color: #6366f1;
+        font-weight: 600;
+        text-decoration: none;
+    }
+
+    .login-link a:hover {
+        text-decoration: underline;
+    }
+
+    .password-hint {
+        font-size: 11px;
+        color: #9ca3af;
+        margin-top: 4px;
+    }
+
+    /* Theme Adaptive Overrides */
+    html[data-theme="dark"] .auth-card,
+    html[data-theme="midnight"] .auth-card,
+    html[data-theme="forest"] .auth-card {
+        background: rgba(30, 41, 59, 0.7);
+        backdrop-filter: blur(12px);
+        border: 1px solid rgba(99, 102, 241, 0.2);
+    }
+
+    html[data-theme="dark"] .form-group label,
+    html[data-theme="midnight"] .form-group label,
+    html[data-theme="forest"] .form-group label {
+        color: #e2e8f0;
+    }
+
+    html[data-theme="dark"] .form-group input,
+    html[data-theme="midnight"] .form-group input,
+    html[data-theme="forest"] .form-group input,
+    html[data-theme="dark"] .form-group select,
+    html[data-theme="midnight"] .form-group select,
+    html[data-theme="forest"] .form-group select {
+        background: #0f172a;
+        border-color: rgba(99, 102, 241, 0.3);
+        color: #f1f5f9;
+    }
+
+    html[data-theme="dark"] .auth-subtitle,
+    html[data-theme="midnight"] .auth-subtitle,
+    html[data-theme="forest"] .auth-subtitle {
+        color: #94a3b8;
+    }
+
+    html[data-theme="dark"] .login-link,
+    html[data-theme="midnight"] .login-link,
+    html[data-theme="forest"] .login-link {
+        color: #94a3b8;
+    }
+
+    html[data-theme="dark"] .section-label,
+    html[data-theme="midnight"] .section-label,
+    html[data-theme="forest"] .section-label {
+        color: #64748b;
+    }
+
+    html[data-theme="dark"] .section-label::before,
+    html[data-theme="midnight"] .section-label::before,
+    html[data-theme="forest"] .section-label::before,
+    html[data-theme="dark"] .section-label::after,
+    html[data-theme="midnight"] .section-label::after,
+    html[data-theme="forest"] .section-label::after {
+        background: #334155;
+    }
+
+    html[data-theme="dark"] .password-hint,
+    html[data-theme="midnight"] .password-hint,
+    html[data-theme="forest"] .password-hint {
+        color: #64748b;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="auth-wrapper">
+    <div class="auth-card">
+        <div class="auth-logo">🎓 CollegeEvents</div>
+        <p class="auth-subtitle">Create your student account to register for events</p>
+
+        {% if messages %}
+        <div style="margin-bottom:20px;">
+            {% for msg in messages %}
+            <div
+                style="background:{% if msg.tags == 'error' %}#fef2f2{% else %}#f0fdf4{% endif %}; color:{% if msg.tags == 'error' %}#b91c1c{% else %}#15803d{% endif %}; padding:12px 16px; border-radius:10px; margin-bottom:8px; font-size:14px; font-weight:500; border-left:4px solid {% if msg.tags == 'error' %}#ef4444{% else %}#22c55e{% endif %};">
+                {{ msg }}
+            </div>
+            {% endfor %}
+        </div>
+        {% endif %}
+
+        <form method="POST" action="{% url 'student_signup' %}">
+            {% csrf_token %}
+
+            <div class="section-label">Personal Details</div>
+            <div class="form-row">
+                <div class="form-group">
+                    <label>First Name <span class="req">*</span></label>
+                    <input type="text" name="first_name" placeholder="Pratik" required
+                        value="{{ request.POST.first_name }}">
+                </div>
+                <div class="form-group">
+                    <label>Last Name</label>
+                    <input type="text" name="last_name" placeholder="Sharma" value="{{ request.POST.last_name }}">
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label>Username <span class="req">*</span></label>
+                <input type="text" name="username" placeholder="pratik_sharma" required
+                    value="{{ request.POST.username }}">
+            </div>
+
+            <div class="form-group">
+                <label>Email Address <span class="req">*</span></label>
+                <input type="email" name="email" placeholder="you@college.edu" required
+                    value="{{ request.POST.email }}">
+            </div>
+
+            <div class="form-row">
+                <div class="form-group">
+                    <label>Password <span class="req">*</span></label>
+                    <input type="password" name="password1" placeholder="Min 8 characters" required>
+                    <p class="password-hint">At least 8 characters</p>
+                </div>
+                <div class="form-group">
+                    <label>Confirm Password <span class="req">*</span></label>
+                    <input type="password" name="password2" placeholder="Repeat password" required>
+                </div>
+            </div>
+
+            <div class="section-label">Academic Details (Optional)</div>
+
+            <div class="form-group">
+                <label>Mobile Number</label>
+                <input type="tel" name="mobile" placeholder="10-digit number" maxlength="10"
+                    value="{{ request.POST.mobile }}">
+            </div>
+
+            <div class="form-row">
+                <div class="form-group">
+                    <label>Course</label>
+                    <select name="course">
+                        <option value="">Select course</option>
+                        <option value="B.Tech" {% if request.POST.course == "B.Tech" %}selected{% endif %}>B.Tech</option>
+                        <option value="M.Tech" {% if request.POST.course == "M.Tech" %}selected{% endif %}>M.Tech</option>
+                        <option value="BCA" {% if request.POST.course == "BCA" %}selected{% endif %}>BCA</option>
+                        <option value="MCA" {% if request.POST.course == "MCA" %}selected{% endif %}>MCA</option>
+                        <option value="BSc" {% if request.POST.course == "BSc" %}selected{% endif %}>BSc</option>
+                        <option value="MBA" {% if request.POST.course == "MBA" %}selected{% endif %}>MBA</option>
+                        <option value="Other" {% if request.POST.course == "Other" %}selected{% endif %}>Other</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Year</label>
+                    <select name="year">
+                        <option value="">Select year</option>
+                        <option value="1st Year">1st Year</option>
+                        <option value="2nd Year">2nd Year</option>
+                        <option value="3rd Year">3rd Year</option>
+                        <option value="4th Year">4th Year</option>
+                        <option value="Alumni">Alumni</option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label>Branch</label>
+                <select name="branch">
+                    <option value="">Select branch</option>
+                    <option value="Computer Science">Computer Science</option>
+                    <option value="Information Technology">Information Technology</option>
+                    <option value="Electronics">Electronics</option>
+                    <option value="Mechanical">Mechanical</option>
+                    <option value="Civil">Civil</option>
+                    <option value="Other">Other</option>
+                </select>
+            </div>
+
+            <button type="submit" class="btn-signup">🚀 Create My Account</button>
+        </form>
+
+        <p class="login-link">
+            Already have an account? <a href="{% url 'student_login' %}">Log in here</a>
+        </p>
+    </div>
+</div>
+{% endblock %}

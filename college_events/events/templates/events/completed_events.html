@@ -1,0 +1,83 @@
+{% extends 'events/base.html' %}
+{% load static %}
+
+{% block title %}Completed Events — CollegeEvents{% endblock %}
+{% block meta_description %}Relive past college events, workshops, hackathons and cultural fests.{% endblock %}
+
+{% block content %}
+
+<!-- Page Hero -->
+<div class="page-hero" style="background:linear-gradient(135deg,#10b981 0%,#059669 50%,#047857 100%);">
+    <div class="container" style="position:relative;z-index:2;">
+        <h1 data-aos="fade-up"><i class="fas fa-check-circle mr-3"></i>Completed Events</h1>
+        <p data-aos="fade-up" data-aos-delay="100">Relive the memories of past events and celebrations</p>
+    </div>
+</div>
+
+<!-- Past Events Section -->
+<section style="padding: 60px 0 100px;">
+    <div class="container">
+
+        {% if events %}
+        <div class="row">
+            {% for event in events %}
+            <div class="col-md-4 mb-5" data-aos="fade-up" data-aos-delay="{{ forloop.counter0 }}00">
+                <div class="event-card premium-glass-card shadow-hover">
+                    <!-- Image Area -->
+                    <div class="event-image-container">
+                        <img src="{{ event.get_image_url }}" alt="{{ event.name }}" class="event-img-zoom"
+                            style="filter: grayscale(40%);">
+                        <div class="event-overlay-gradient"></div>
+                        <span class="event-status-pill"
+                            style="background:rgba(107,114,128,0.9); border:none;">CONCLUDED</span>
+                    </div>
+
+                    <!-- Card Body -->
+                    <div class="card-body event-card-content">
+                        <h5 class="event-title-premium">{{ event.name }}</h5>
+                        <p class="event-desc-premium">{{ event.description|truncatechars:100 }}</p>
+
+                        <!-- Details -->
+                        <div class="event-details-grid" style="margin-bottom:20px;">
+                            <div class="detail-item"><i class="fas fa-calendar-alt"></i> <span>{{ event.date|date:"d M Y" }}</span></div>
+                            <div class="detail-item"><i class="fas fa-map-marker-alt"></i> <span>{{ event.venue }}</span></div>
+                            {% if event.time %}
+                            <div class="detail-item"><i class="fas fa-clock"></i> <span>{{ event.time|time:"g:i A" }}</span></div>
+                            {% endif %}
+                        </div>
+
+                        <!-- Highlights -->
+                        <div class="mt-auto d-flex align-items-center justify-content-between"
+                            style="padding-top:15px; border-top:1px solid rgba(0,0,0,0.05);">
+                            <span
+                                style="background:rgba(16,185,129,0.1); color:#10b981; padding:6px 14px; border-radius:50px; font-size:12px; font-weight:700;">
+                                <i class="fas fa-users mr-1"></i> {{ event.registrations.count }} attended
+                            </span>
+                            <small class="text-muted" style="font-weight:600;">Event Concluded</small>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+
+        {% else %}
+        <!-- Empty state -->
+        <div style="text-align:center;padding:100px 20px;" data-aos="fade-up">
+            <div
+                style="width:100px;height:100px;background:linear-gradient(135deg,#e2e8f0,#cbd5e1);border-radius:50%;display:flex;align-items:center;justify-content:center;margin:0 auto 24px;">
+                <i class="fas fa-calendar-check" style="font-size:40px;color:#94a3b8;"></i>
+            </div>
+            <h4 style="color:#64748b;font-weight:700;margin-bottom:8px;">No completed events yet</h4>
+            <p style="color:#94a3b8;font-size:15px;">Check back after events have concluded</p>
+            <a href="{% url 'event_list' %}" class="btn mt-3"
+                style="background:linear-gradient(135deg,#10b981,#059669);color:#fff;border-radius:50px;padding:12px 32px;font-weight:700;border:none;">
+                Browse Upcoming Events
+            </a>
+        </div>
+        {% endif %}
+
+    </div>
+</section>
+
+{% endblock %}

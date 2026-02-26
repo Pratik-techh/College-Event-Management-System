@@ -1,0 +1,128 @@
+{% extends 'events/base.html' %}
+{% load static %}
+
+{% block title %}Contact Us — CollegeEvents{% endblock %}
+{% block meta_description %}Get in touch with the CollegeEvents team for any queries or support.{% endblock %}
+
+{% block content %}
+
+<!-- Page Hero -->
+<div class="page-hero" style="background:linear-gradient(135deg,#ec4899 0%,#db2777 50%,#be185d 100%);">
+    <div class="container" style="position:relative;z-index:2;">
+        <h1 data-aos="fade-up"><i class="fas fa-envelope mr-3"></i>Contact Us</h1>
+        <p data-aos="fade-up" data-aos-delay="100">We'd love to hear from you — questions, feedback, or just a hello!
+        </p>
+    </div>
+</div>
+
+<!-- Contact Section -->
+<section style="padding: 80px 0 100px;">
+    <div class="container">
+        <div class="row">
+
+            <!-- Contact Form -->
+            <div class="col-lg-7 mb-4 mb-lg-0" data-aos="fade-right">
+                <div class="premium-glass-card" style="padding:40px; border-radius:32px;">
+                    <h3 class="card-title" style="font-size:28px; font-weight:800; margin-bottom:8px;">
+                        Send Us a Message</h3>
+                    <p class="text-muted" style="margin-bottom:28px;">We'll get back to you within 24 hours.</p>
+
+                    <form method="POST" id="contactForm">
+                        {% csrf_token %}
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label class="premium-label" style="font-size:12px;">Full Name</label>
+                                    <input type="text" name="name" class="form-control premium-input"
+                                        placeholder="Your full name" required>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label class="premium-label" style="font-size:12px;">Email Address</label>
+                                    <input type="email" name="email" class="form-control premium-input"
+                                        placeholder="your@email.com" required>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="premium-label" style="font-size:12px;">Subject</label>
+                            <select name="subject" class="form-control premium-input" style="height:auto;">
+                                <option value="general">General Inquiry</option>
+                                <option value="event">Event Related</option>
+                                <option value="registration">Registration Issue</option>
+                                <option value="technical">Technical Problem</option>
+                                <option value="feedback">Feedback / Suggestion</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label class="premium-label" style="font-size:12px;">Your Message</label>
+                            <textarea name="message" class="form-control premium-input" rows="5"
+                                placeholder="Tell us how we can help..." required></textarea>
+                        </div>
+                        <button type="submit" class="btn btn-block"
+                            style="background:linear-gradient(135deg,#ec4899,#db2777);color:#fff;border-radius:50px;padding:15px;font-weight:700;font-size:16px;border:none;transition:all 0.3s;"
+                            onmouseover="this.style.transform='translateY(-2px)';this.style.boxShadow='0 12px 32px rgba(236,72,153,0.4)'"
+                            onmouseout="this.style.transform='none';this.style.boxShadow='none'">
+                            <i class="fas fa-paper-plane mr-2"></i> Send Message
+                        </button>
+                    </form>
+                </div>
+            </div>
+
+            <!-- Contact Info -->
+            <div class="col-lg-5" data-aos="fade-left">
+                <div style="padding:10px;">
+                    <h3 class="card-title" style="font-size:28px; font-weight:800; margin-bottom:24px;">
+                        Get In Touch</h3>
+
+
+                    <div style="display:flex;align-items:flex-start;gap:18px;margin-bottom:28px;">
+                        <div
+                            style="width:52px;height:52px;min-width:52px;background:linear-gradient(135deg,#10b981,#34d399);border-radius:16px;display:flex;align-items:center;justify-content:center; box-shadow:0 10px 20px rgba(16,185,129,0.2);">
+                            <i class="fas fa-envelope" style="color:#fff;font-size:20px;"></i>
+                        </div>
+                        <div>
+                            <h6 class="card-title" style="font-size:17px; margin-bottom:4px;">Email Us</h6>
+                            <p class="text-muted" style="font-size:14px;margin:0;">pratikmandolikar12@gmail.com</p>
+                            <p class="text-muted" style="font-size:14px;margin:0;">akashbanda2005@gmail.com</p>
+                        </div>
+                    </div>
+
+                    <div style="display:flex;align-items:flex-start;gap:18px;margin-bottom:28px;">
+                        <div
+                            style="width:52px;height:52px;min-width:52px;background:linear-gradient(135deg,#f59e0b,#fcd34d);border-radius:16px;display:flex;align-items:center;justify-content:center; box-shadow:0 10px 20px rgba(245,158,11,0.2);">
+                            <i class="fas fa-phone-alt" style="color:#fff;font-size:20px;"></i>
+                        </div>
+                        <div>
+                            <h6 class="card-title" style="font-size:17px; margin-bottom:4px;">Call Us</h6>
+                            <p class="text-muted" style="font-size:14px;margin:0;">+91 9322386034</p>
+                        </div>
+                    </div>
+
+
+
+                    <!-- Quick Links CTA -->
+                    <div class="premium-glass-card"
+                        style="border-radius:20px;padding:24px;margin-top:32px;border:2px solid rgba(99,102,241,0.1);">
+                        <h6 class="card-title" style="font-weight:700;margin-bottom:12px;">Quick Links</h6>
+                        <a href="{% url 'event_list' %}"
+                            style="display:block;color:#6366f1;font-weight:600;font-size:14px;text-decoration:none;padding:6px 0;border-bottom:1px solid rgba(0,0,0,0.05);">
+                            📅 Browse Upcoming Events →
+                        </a>
+                        <a href="{% url 'completed_events' %}"
+                            style="display:block;color:#10b981;font-weight:600;font-size:14px;text-decoration:none;padding:6px 0;border-bottom:1px solid rgba(0,0,0,0.05);">
+                            ✅ View Completed Events →
+                        </a>
+                        <a href="{% url 'admin_login' %}"
+                            style="display:block;color:#ec4899;font-weight:600;font-size:14px;text-decoration:none;padding:6px 0;">
+                            🔐 Admin Login →
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+{% endblock %}

@@ -1,0 +1,871 @@
+{% extends 'events/base.html' %}
+{% load static %}
+{% block title %}My Dashboard — CollegeEvents{% endblock %}
+
+{% block extra_css %}
+<style>
+    .dashboard-hero {
+        background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 50%, #ec4899 100%);
+        padding: 120px 0 60px;
+        text-align: center;
+        color: #fff;
+        position: relative;
+        overflow: hidden;
+    }
+
+    .dashboard-hero::after {
+        content: '';
+        position: absolute;
+        bottom: -2px;
+        left: 0;
+        right: 0;
+        height: 60px;
+        background: var(--light-color);
+        clip-path: polygon(0 100%, 100% 0, 100% 100%);
+    }
+
+    .avatar-circle {
+        width: 90px;
+        height: 90px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 34px;
+        font-weight: 900;
+        color: #fff;
+        margin: 0 auto 16px;
+        border: 4px solid rgba(255, 255, 255, 0.3);
+        box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
+        font-family: 'Outfit', sans-serif;
+    }
+
+    .dashboard-name {
+        font-family: 'Outfit', sans-serif;
+        font-size: 30px;
+        font-weight: 800;
+        margin-bottom: 6px;
+    }
+
+    .dashboard-badge {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        background: rgba(255, 255, 255, 0.2);
+        backdrop-filter: blur(8px);
+        border: 1px solid rgba(255, 255, 255, 0.3);
+        padding: 6px 16px;
+        border-radius: 50px;
+        font-size: 13px;
+        font-weight: 600;
+        margin-top: 8px;
+    }
+
+    .stats-row {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 20px;
+        margin-bottom: 40px;
+    }
+
+    .stat-card {
+        background: #fff;
+        border-radius: 20px;
+        padding: 28px 24px;
+        text-align: center;
+        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.07);
+        border: 1.5px solid #e2e8f0;
+        transition: transform 0.3s, box-shadow 0.3s;
+    }
+
+    .stat-card:hover {
+        transform: translateY(-4px);
+        box-shadow: 0 12px 36px rgba(0, 0, 0, 0.1);
+    }
+
+    .stat-number {
+        font-family: 'Outfit', sans-serif;
+        font-size: 40px;
+        font-weight: 900;
+        background: linear-gradient(135deg, #6366f1, #ec4899);
+        -webkit-background-clip: text;
+        background-clip: text;
+        -webkit-text-fill-color: transparent;
+    }
+
+    .stat-label {
+        font-size: 13px;
+        color: #64748b;
+        font-weight: 600;
+        margin-top: 4px;
+    }
+
+    .section-header {
+        font-family: 'Outfit', sans-serif;
+        font-size: 24px;
+        font-weight: 800;
+        color: #0f172a;
+        margin-bottom: 20px;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+    }
+
+    .reg-card {
+        background: #fff;
+        border-radius: 18px;
+        padding: 22px 24px;
+        box-shadow: 0 2px 16px rgba(0, 0, 0, 0.06);
+        border: 1.5px solid #e2e8f0;
+        margin-bottom: 16px;
+        display: flex;
+        align-items: center;
+        gap: 20px;
+        transition: all 0.3s;
+    }
+
+    .reg-card:hover {
+        transform: translateX(4px);
+        box-shadow: 0 8px 28px rgba(0, 0, 0, 0.1);
+    }
+
+    .reg-card-img {
+        width: 72px;
+        height: 72px;
+        border-radius: 14px;
+        object-fit: cover;
+        flex-shrink: 0;
+    }
+
+    .reg-card-info {
+        flex: 1;
+        min-width: 0;
+    }
+
+    .reg-card-actions {
+        display: flex;
+        gap: 10px;
+        align-items: center;
+    }
+
+    .btn-manage {
+        background: #f1f5f9;
+        color: #475569;
+        border: 1px solid #e2e8f0;
+        padding: 6px 14px;
+        border-radius: 50px;
+        font-size: 13px;
+        font-weight: 700;
+        cursor: pointer;
+        transition: all 0.2s;
+        text-decoration: none;
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+    }
+
+    .btn-manage:hover {
+        background: #6366f1;
+        color: #fff;
+        border-color: #6366f1;
+    }
+
+    .btn-cancel-reg {
+        color: #ef4444;
+        background: #fef2f2;
+        border: 1px solid #fee2e2;
+        padding: 6px 12px;
+        border-radius: 50px;
+        font-size: 13px;
+        font-weight: 700;
+        cursor: pointer;
+        transition: all 0.2s;
+    }
+
+    .btn-cancel-reg:hover {
+        background: #ef4444;
+        color: #fff;
+    }
+
+    .reg-card-name {
+        font-family: 'Outfit', sans-serif;
+        font-size: 17px;
+        font-weight: 700;
+        color: #0f172a;
+        margin-bottom: 4px;
+    }
+
+    .reg-card-meta {
+        font-size: 13px;
+        color: #64748b;
+        display: flex;
+        gap: 16px;
+        flex-wrap: wrap;
+    }
+
+    .reg-card-meta span {
+        display: flex;
+        align-items: center;
+        gap: 5px;
+    }
+
+    .badge-upcoming {
+        background: #f0fdf4;
+        color: #15803d;
+        padding: 4px 12px;
+        border-radius: 50px;
+        font-size: 12px;
+        font-weight: 700;
+    }
+
+    .badge-completed {
+        background: #f8fafc;
+        color: #64748b;
+        padding: 4px 12px;
+        border-radius: 50px;
+        font-size: 12px;
+        font-weight: 700;
+    }
+
+    .profile-section {
+        background: #fff;
+        border-radius: 24px;
+        padding: 36px;
+        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.07);
+        border: 1.5px solid #e2e8f0;
+    }
+
+    .profile-field-group {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 16px;
+    }
+
+    .profile-field {
+        margin-bottom: 18px;
+    }
+
+    .profile-field label {
+        display: block;
+        font-weight: 600;
+        font-size: 12px;
+        color: #9ca3af;
+        text-transform: uppercase;
+        letter-spacing: 0.7px;
+        margin-bottom: 6px;
+    }
+
+    .profile-field input,
+    .profile-field select,
+    .profile-field textarea {
+        width: 100%;
+        padding: 12px 16px;
+        border: 2px solid #e5e7eb;
+        border-radius: 12px;
+        font-family: 'Inter', sans-serif;
+        font-size: 14px;
+        color: #0f172a;
+        outline: none;
+        line-height: 1.5;
+        height: auto;
+        min-height: 48px;
+        transition: border-color 0.2s, box-shadow 0.2s;
+        background: #f9fafb;
+        -webkit-appearance: none;
+        appearance: none;
+    }
+
+    .profile-field select {
+        background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath fill='%236B7280' d='M1 1l5 5 5-5'/%3E%3C/svg%3E");
+        background-repeat: no-repeat;
+        background-position: right 16px center;
+        padding-right: 40px;
+    }
+
+    .profile-field input:focus,
+    .profile-field select:focus,
+    .profile-field textarea:focus {
+        border-color: #6366f1;
+        box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.1);
+        background: #fff;
+    }
+
+    .profile-field textarea {
+        resize: vertical;
+        min-height: 80px;
+    }
+
+    .btn-save {
+        background: linear-gradient(135deg, #6366f1, #ec4899);
+        color: #fff;
+        border: none;
+        border-radius: 50px;
+        padding: 12px 36px;
+        font-weight: 700;
+        font-size: 15px;
+        cursor: pointer;
+        transition: all 0.3s;
+    }
+
+    .btn-save:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 10px 30px rgba(99, 102, 241, 0.35);
+    }
+
+    .empty-reg {
+        text-align: center;
+        padding: 50px 20px;
+        color: #94a3b8;
+        font-size: 15px;
+    }
+
+    .empty-reg .emoji {
+        font-size: 50px;
+        display: block;
+        margin-bottom: 12px;
+    }
+
+    /* Tiered Dark-Mode Overrides (Dark, Midnight, Forest) */
+    html[data-theme="dark"] .stat-card,
+    html[data-theme="midnight"] .stat-card,
+    html[data-theme="forest"] .stat-card,
+    html[data-theme="dark"] .reg-card,
+    html[data-theme="midnight"] .reg-card,
+    html[data-theme="forest"] .reg-card,
+    html[data-theme="dark"] .profile-section,
+    html[data-theme="midnight"] .profile-section,
+    html[data-theme="forest"] .profile-section {
+        background: rgba(30, 41, 59, 0.7) !important;
+        backdrop-filter: blur(12px);
+        border-color: rgba(99, 102, 241, 0.2) !important;
+    }
+
+    html[data-theme="dark"] .reg-card-name,
+    html[data-theme="midnight"] .reg-card-name,
+    html[data-theme="forest"] .reg-card-name,
+    html[data-theme="dark"] .section-header,
+    html[data-theme="midnight"] .section-header,
+    html[data-theme="forest"] .section-header {
+        color: #f1f5f9 !important;
+    }
+
+    html[data-theme="dark"] .profile-field label,
+    html[data-theme="midnight"] .profile-field label,
+    html[data-theme="forest"] .profile-field label {
+        color: #94a3b8 !important;
+    }
+
+    html[data-theme="dark"] .profile-field input,
+    html[data-theme="midnight"] .profile-field input,
+    html[data-theme="forest"] .profile-field input,
+    html[data-theme="dark"] .profile-field select,
+    html[data-theme="midnight"] .profile-field select,
+    html[data-theme="forest"] .profile-field select,
+    html[data-theme="dark"] .profile-field textarea,
+    html[data-theme="midnight"] .profile-field textarea,
+    html[data-theme="forest"] .profile-field textarea {
+        background: #0f172a !important;
+        border-color: rgba(99, 102, 241, 0.25) !important;
+        color: #f1f5f9 !important;
+    }
+
+    html[data-theme="dark"] .dashboard-hero::after,
+    html[data-theme="midnight"] .dashboard-hero::after,
+    html[data-theme="forest"] .dashboard-hero::after {
+        background: transparent !important;
+        display: none;
+    }
+
+    @media (max-width: 768px) {
+        .stats-row {
+            grid-template-columns: 1fr 1fr;
+        }
+
+        .profile-field-group {
+            grid-template-columns: 1fr;
+        }
+
+        .reg-card-meta {
+            gap: 10px;
+        }
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+
+<!-- Hero Banner -->
+<div class="dashboard-hero">
+    <div class="container" style="position:relative;z-index:2;">
+        <style>
+            .avatar-color-dynamic {
+                background: {{ profile.avatar_color }};
+            }
+        </style>
+        <div class="avatar-circle avatar-color-dynamic">
+            {{ profile.get_initials }}
+        </div>
+        <div class="dashboard-name">{{ request.user.get_full_name|default:request.user.username }}</div>
+        {% if profile.course %}
+        <div class="dashboard-badge">
+            🎓 {{ profile.course }}{% if profile.branch %} — {{ profile.branch }}{% endif %}
+            {% if profile.year %} · {{ profile.year }}{% endif %}
+        </div>
+        {% endif %}
+        <p style="margin-top:12px;opacity:0.85;font-size:14px;color:#f8fafc;">{{ request.user.email }}</p>
+    </div>
+</div>
+
+<section style="padding:60px 0 100px;">
+    <div class="container">
+
+        <!-- Stats Row -->
+        <div class="stats-row" data-aos="fade-up">
+            <div class="stat-card">
+                <div class="stat-number">{{ total }}</div>
+                <div class="stat-label">📋 Total Registrations</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-number">{{ upcoming|length }}</div>
+                <div class="stat-label">📅 Upcoming Events</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-number">{{ completed|length }}</div>
+                <div class="stat-label">✅ Events Attended</div>
+            </div>
+        </div>
+
+        <div class="row">
+            <!-- Left: My Events -->
+            <div class="col-lg-7 mb-4" data-aos="fade-right">
+
+                <!-- Upcoming Registrations -->
+                <div class="section-header">📅 My Upcoming Events</div>
+                {% if upcoming %}
+                {% for reg in upcoming %}
+                <div class="reg-card">
+                    <img src="{{ reg.event.get_image_url }}" alt="{{ reg.event.name }}" class="reg-card-img">
+                    <div class="reg-card-info">
+                        <div class="reg-card-name">{{ reg.event.name }}</div>
+                        <div class="reg-card-meta">
+                            <span>📅 {{ reg.event.date }}</span>
+                            <span>📍 {{ reg.event.venue }}</span>
+                            {% if reg.days_remaining == 0 %}
+                            <span style="color:#ef4444;font-weight:700;"><i class="fas fa-fire"></i> Happening
+                                Today!</span>
+                            {% else %}
+                            <span style="color:#6366f1;font-weight:600;"><i class="fas fa-clock"></i> {{
+                                reg.days_remaining }} days left</span>
+                            {% endif %}
+                        </div>
+                    </div>
+                    <div class="reg-card-actions">
+                        <button class="btn-manage btn-view-ticket"
+                            style="background:rgba(99,102,241,0.15); color:#6366f1; border-color:rgba(99,102,241,0.2);"
+                            data-reg-id="{{ reg.id }}" data-event-id="{{ reg.event.id }}"
+                            data-event-name="{{ reg.event.name|escapejs }}"
+                            data-date="{{ reg.event.date|date:'d M Y'|escapejs }}"
+                            data-venue="{{ reg.event.venue|escapejs }}" data-student-name="{{ reg.name|escapejs }}"
+                            data-student-email="{{ reg.email|escapejs }}" data-mobile="{{ reg.mobile|escapejs }}"
+                            data-course="{{ reg.course|escapejs }}" data-branch="{{ reg.branch|escapejs }}">
+                            <i class="fas fa-ticket-alt"></i> Ticket
+                        </button>
+                        <button class="btn-manage btn-edit-reg" data-reg-id="{{ reg.id }}"
+                            data-event-name="{{ reg.event.name|escapejs }}" data-student-name="{{ reg.name|escapejs }}"
+                            data-student-email="{{ reg.email|escapejs }}" data-mobile="{{ reg.mobile|escapejs }}"
+                            data-course="{{ reg.course|escapejs }}" data-branch="{{ reg.branch|escapejs }}">
+                            <i class="fas fa-edit"></i> Manage
+                        </button>
+                    </div>
+                </div>
+                {% endfor %}
+                {% else %}
+                <div class="empty-reg">
+                    <span class="emoji">🗓️</span>
+                    No upcoming events yet.<br>
+                    <a href="{% url 'event_list' %}" style="color:#6366f1;font-weight:600;">Browse events →</a>
+                </div>
+                {% endif %}
+
+                <!-- Completed Registrations -->
+                {% if completed %}
+                <div class="section-header" style="margin-top:36px;">✅ Events Attended</div>
+                {% for reg in completed %}
+                <div class="reg-card" style="opacity:0.75;">
+                    <img src="{{ reg.event.get_image_url }}" alt="{{ reg.event.name }}" class="reg-card-img"
+                        style="filter:grayscale(40%);">
+                    <div class="reg-card-info">
+                        <div class="reg-card-name">{{ reg.event.name }}</div>
+                        <div class="reg-card-meta">
+                            <span>📅 {{ reg.event.date }}</span>
+                            <span>📍 {{ reg.event.venue }}</span>
+                        </div>
+                    </div>
+                    <span class="badge-completed">COMPLETED</span>
+                </div>
+                {% endfor %}
+                {% endif %}
+
+            </div>
+
+            <!-- Right: Profile Editor -->
+            <div class="col-lg-5 mb-4" data-aos="fade-left">
+                <div class="section-header">⚙️ Edit Profile</div>
+                <div class="profile-section">
+                    <form method="POST" action="{% url 'student_update_profile' %}">
+                        {% csrf_token %}
+                        <div class="profile-field-group">
+                            <div class="profile-field">
+                                <label>First Name</label>
+                                <input type="text" name="first_name" value="{{ request.user.first_name }}">
+                            </div>
+                            <div class="profile-field">
+                                <label>Last Name</label>
+                                <input type="text" name="last_name" value="{{ request.user.last_name }}">
+                            </div>
+                        </div>
+                        <div class="profile-field">
+                            <label>Email Address</label>
+                            <input type="email" name="email" value="{{ request.user.email }}">
+                        </div>
+                        <div class="profile-field">
+                            <label>Mobile Number</label>
+                            <input type="tel" name="mobile" value="{{ profile.mobile }}" maxlength="10">
+                        </div>
+                        <div class="profile-field-group">
+                            <div class="profile-field">
+                                <label>Course</label>
+                                <select name="course">
+                                    <option value="">Select course</option>
+                                    <option value="B.Tech" {% if profile.course == "B.Tech" %}selected{% endif %}>B.Tech
+                                    </option>
+                                    <option value="M.Tech" {% if profile.course == "M.Tech" %}selected{% endif %}>M.Tech
+                                    </option>
+                                    <option value="BCA" {% if profile.course == "BCA" %}selected{% endif %}>BCA</option>
+                                    <option value="MCA" {% if profile.course == "MCA" %}selected{% endif %}>MCA</option>
+                                    <option value="BSc" {% if profile.course == "BSc" %}selected{% endif %}>BSc</option>
+                                    <option value="MBA" {% if profile.course == "MBA" %}selected{% endif %}>MBA</option>
+                                    <option value="Other" {% if profile.course == "Other" %}selected{% endif %}>Other
+                                    </option>
+                                </select>
+                            </div>
+                            <div class="profile-field">
+                                <label>Year</label>
+                                <select name="year">
+                                    <option value="">Select year</option>
+                                    <option value="1st Year" {% if profile.year == "1st Year" %}selected{% endif %}>1st
+                                        Year</option>
+                                    <option value="2nd Year" {% if profile.year == "2nd Year" %}selected{% endif %}>2nd
+                                        Year</option>
+                                    <option value="3rd Year" {% if profile.year == "3rd Year" %}selected{% endif %}>3rd
+                                        Year</option>
+                                    <option value="4th Year" {% if profile.year == "4th Year" %}selected{% endif %}>4th
+                                        Year</option>
+                                    <option value="Alumni" {% if profile.year == "Alumni" %}selected{% endif %}>Alumni
+                                    </option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="profile-field">
+                            <label>Branch</label>
+                            <select name="branch">
+                                <option value="">Select branch</option>
+                                <option value="Computer Science" {% if profile.branch == "Computer Science" %}selected{%
+                                    endif %}>Computer Science</option>
+                                <option value="Information Technology" {% if profile.branch=="Information Technology"
+                                    %}selected{% endif %}>Information Technology</option>
+                                <option value="Electronics" {% if profile.branch == "Electronics" %}selected{% endif %}>
+                                    Electronics</option>
+                                <option value="Mechanical" {% if profile.branch == "Mechanical" %}selected{% endif %}>
+                                    Mechanical</option>
+                                <option value="Civil" {% if profile.branch == "Civil" %}selected{% endif %}>Civil</option>
+                                <option value="Other" {% if profile.branch == "Other" %}selected{% endif %}>Other</option>
+                            </select>
+                        </div>
+
+                        <div class="profile-field">
+                            <label>Bio (optional)</label>
+                            <textarea name="bio" placeholder="Tell us about yourself...">{{ profile.bio }}</textarea>
+                        </div>
+                        <button type="submit" class="btn-save">💾 Save Changes</button>
+                    </form>
+
+                    <div style="margin-top:24px;padding-top:20px;border-top:1px solid #e2e8f0;text-align:center;">
+                        <a href="{% url 'student_logout' %}"
+                            style="color:#ef4444;font-weight:600;font-size:14px;text-decoration:none;"
+                            onclick="return confirm('Log out?')">
+                            🚪 Sign Out
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Quick links -->
+        <div style="text-align:center;margin-top:20px;" data-aos="fade-up">
+            <a href="{% url 'event_list' %}" style="background:linear-gradient(135deg,#6366f1,#ec4899);color:#fff;
+                      padding:14px 36px;border-radius:50px;font-weight:700;font-size:15px;
+                      text-decoration:none;display:inline-block;
+                      transition:all 0.3s;"
+                onmouseover="this.style.transform='translateY(-2px)';this.style.boxShadow='0 12px 36px rgba(99,102,241,0.35)'"
+                onmouseout="this.style.transform='none';this.style.boxShadow='none'">
+                🎉 Browse Events &amp; Register
+            </a>
+        </div>
+    </div>
+</section>
+
+<!-- ══════════════ TICKET MODAL ══════════════ -->
+<div class="modal fade" id="ticketModal" tabindex="-1" role="dialog" aria-hidden="true">
+    <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content premium-modal">
+            <div class="modal-header premium-modal-header">
+                <h5 class="modal-title"
+                    style="color:#fff;font-family:'Outfit',sans-serif;font-weight:700;font-size:20px;">🎟️ Your Event
+                    Ticket</h5>
+                <button type="button" class="close" data-dismiss="modal"
+                    style="color:#fff;opacity:1;"><span>&times;</span></button>
+            </div>
+            <div class="modal-body premium-modal-body" style="padding:30px;">
+                <div id="ticketPreview"></div>
+            </div>
+            <div class="modal-footer premium-modal-footer" style="padding:20px 30px 30px;">
+                <button type="button" class="btn" data-dismiss="modal"
+                    style="border-radius:50px;border:2px solid #e2e8f0;padding:10px 24px;font-weight:600;color:#64748b;">Close</button>
+                <button type="button" class="btn" onclick="downloadTicket()"
+                    style="background:linear-gradient(135deg,#6366f1,#ec4899);color:#fff;border-radius:50px;padding:10px 30px;font-weight:700;border:none;">
+                    <i class="fas fa-download mr-1"></i> Download Ticket
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- ══════════════ REGISTRATION UPDATE MODAL ══════════════ -->
+<div class="modal fade" id="updateRegModal" tabindex="-1" role="dialog" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content premium-modal">
+            <div class="modal-header premium-modal-header">
+                <h5 class="modal-title" style="font-family:'Outfit',sans-serif; font-weight:800; font-size:22px;">Update
+                    Registration</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"
+                    style="color:#fff; opacity:1;"><span aria-hidden="true">&times;</span></button>
+            </div>
+            <form id="updateRegForm" method="POST">
+                {% csrf_token %}
+                <div class="modal-body premium-modal-body" style="padding:32px;">
+                    <p style="color:#64748b; font-size:14px; margin-bottom:24px;">
+                        Managing registration for <strong id="modalEventName" class="reg-card-name"
+                            style="font-weight:700;"></strong>
+                    </p>
+
+                    <div class="profile-field">
+                        <label>Full Name</label>
+                        <input type="text" name="name" id="regForm_name" required>
+                    </div>
+
+                    <div class="profile-field">
+                        <label>Email Address</label>
+                        <input type="email" name="email" id="regForm_email" required autocomplete="off">
+                    </div>
+
+                    <div class="profile-field">
+                        <label>Mobile Number</label>
+                        <input type="tel" name="mobile" id="regForm_mobile" maxlength="10" required>
+                    </div>
+
+                    <div class="profile-field-group">
+                        <div class="profile-field">
+                            <label>Course</label>
+                            <select name="course" id="regForm_course" required>
+                                <option value="B.Tech">B.Tech</option>
+                                <option value="M.Tech">M.Tech</option>
+                                <option value="BCA">BCA</option>
+                                <option value="MCA">MCA</option>
+                                <option value="BSc">BSc</option>
+                                <option value="MBA">MBA</option>
+                                <option value="Other">Other</option>
+                            </select>
+                        </div>
+                        <div class="profile-field">
+                            <label>Branch</label>
+                            <select name="branch" id="regForm_branch" required>
+                                <option value="Computer Science">Computer Science</option>
+                                <option value="Information Technology">Information Technology</option>
+                                <option value="Electronics">Electronics</option>
+                                <option value="Mechanical">Mechanical</option>
+                                <option value="Civil">Civil</option>
+                                <option value="Other">Other</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <!-- Cancel Button -->
+                    <div style="margin-top:20px; padding-top:20px; border-top:1px solid #f1f5f9; text-align:center;">
+                        <button type="button" class="btn-cancel-reg" onclick="submitCancel()">
+                            <i class="fas fa-trash-alt mr-2"></i> Cancel This Registration
+                        </button>
+                    </div>
+                </div>
+                <div class="modal-footer" style="padding:24px; border:none; background:#f8fafc;">
+                    <button type="button" class="btn btn-link" data-dismiss="modal"
+                        style="color:#94a3b8; font-weight:700; text-decoration:none;">Discard</button>
+                    <button type="submit" class="btn-save">💾 Update Details</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<form id="cancelRegForm" method="POST" style="display:none;">
+    {% csrf_token %}
+</form>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+<script src="https://html2canvas.hertzen.com/dist/html2canvas.min.js"></script>
+<script>
+    let currentRegId = null;
+
+    // View Ticket Handler
+    document.querySelectorAll('.btn-view-ticket').forEach(btn => {
+        btn.addEventListener('click', function () {
+            const d = this.dataset;
+            viewTicket(
+                d.regId, d.eventId, d.eventName, d.date, d.venue,
+                d.studentName, d.studentEmail, d.mobile, d.course, d.branch
+            );
+        });
+    });
+
+    // Edit Registration Handler
+    document.querySelectorAll('.btn-edit-reg').forEach(btn => {
+        btn.addEventListener('click', function () {
+            const d = this.dataset;
+            openUpdateModal(
+                d.regId, d.eventName, d.studentName, d.studentEmail, d.mobile, d.course, d.branch
+            );
+        });
+    });
+
+    function viewTicket(regId, eventId, eventName, date, venue, studentName, studentEmail, mobile, course, branch) {
+        // Construct registration object for ticket generator
+        const registration = {
+            id: regId,
+            name: studentName,
+            email: studentEmail,
+            mobile: mobile,
+            course: course,
+            branch: branch,
+            ticketId: `CE-${eventId}-${regId}`,
+            verificationCode: 'VERIFIED'
+        };
+
+        const event = {
+            id: eventId,
+            name: eventName,
+            date: date,
+            venue: venue
+        };
+
+        const preview = document.getElementById('ticketPreview');
+        preview.innerHTML = `
+            <div class="ticket" id="ticket-${regId}" style="background:#fff; border-radius:16px; padding:25px; box-shadow:0 10px 30px rgba(0,0,0,0.1); border:1px solid #e2e8f0; max-width:500px; margin:0 auto; position:relative; overflow:hidden;">
+                <div style="position:absolute; top:0; left:0; right:0; height:8px; background:linear-gradient(90deg, #6366f1, #ec4899);"></div>
+                <div style="display:flex; justify-content:space-between; align-items:flex-start; margin-bottom:20px;">
+                    <div>
+                        <h4 style="font-family:'Outfit',sans-serif; font-weight:800; color:#6366f1; margin:0;">CollegeEvents</h4>
+                        <p style="font-size:11px; color:#94a3b8; font-weight:700; text-transform:uppercase; letter-spacing:1px; margin:0;">Official Entry Pass</p>
+                    </div>
+                    <div id="qrcode-${regId}" style="padding:5px; background:#fff; border:1px solid #f1f5f9; border-radius:8px;"></div>
+                </div>
+
+                <div style="margin-bottom:20px;">
+                    <h2 class="reg-card-name" style="font-family:'Outfit',sans-serif; font-weight:800; margin-bottom:5px; font-size:24px;">${eventName}</h2>
+                    <div style="display:flex; gap:15px; font-size:13px; color:#64748b; font-weight:600;">
+                        <span><i class="fas fa-calendar-alt" style="color:#6366f1;"></i> ${date}</span>
+                        <span><i class="fas fa-map-marker-alt" style="color:#6366f1;"></i> ${venue}</span>
+                    </div>
+                </div>
+
+                <div class="profile-field-group" style="background:transparent; border:none; box-shadow:none; padding:0; display:grid; grid-template-columns:1fr 1fr; gap:15px; margin-bottom:0;">
+                    <div>
+                        <label style="display:block; font-size:10px; color:#94a3b8; font-weight:700; text-transform:uppercase; margin-bottom:2px;">Student Name</label>
+                        <span class="reg-card-name" style="font-size:14px; font-weight:700;">${studentName}</span>
+                    </div>
+                    <div>
+                        <label style="display:block; font-size:10px; color:#94a3b8; font-weight:700; text-transform:uppercase; margin-bottom:2px;">Ticket ID</label>
+                        <span class="reg-card-name" style="font-size:14px; font-weight:700;">CE-${eventId}-${regId}</span>
+                    </div>
+                    <div>
+                        <label style="display:block; font-size:10px; color:#94a3b8; font-weight:700; text-transform:uppercase; margin-bottom:2px;">Course</label>
+                        <span class="reg-card-name" style="font-size:14px; font-weight:700;">${course}</span>
+                    </div>
+                    <div>
+                        <label style="display:block; font-size:10px; color:#94a3b8; font-weight:700; text-transform:uppercase; margin-bottom:2px;">Status</label>
+                        <span style="font-size:12px; font-weight:800; color:#10b981;">✅ REGISTERED</span>
+                    </div>
+                </div>
+                
+                <div style="text-align:center; margin-top:15px; font-size:11px; color:#94a3b8;">
+                    This is a digital ticket. Please show the QR code at the entrance.
+                </div>
+            </div>
+        `;
+
+        new QRCode(document.getElementById(`qrcode-${regId}`), {
+            text: `CE-${eventId}-${regId}`,
+            width: 70,
+            height: 70,
+            colorDark: "#0f172a",
+            colorLight: "#ffffff",
+            correctLevel: QRCode.CorrectLevel.H
+        });
+
+        $('#ticketModal').modal('show');
+    }
+
+    function downloadTicket() {
+        const el = document.querySelector('#ticketPreview > .ticket');
+        if (!el) return;
+        html2canvas(el, {
+            scale: 2,
+            backgroundColor: null
+        }).then(canvas => {
+            const link = document.createElement('a');
+            link.download = 'CollegeEvents-Ticket.png';
+            link.href = canvas.toDataURL('image/png');
+            link.click();
+        });
+    }
+
+    function openUpdateModal(id, eventName, name, email, mobile, course, branch) {
+        currentRegId = id;
+        document.getElementById('modalEventName').innerText = eventName;
+        document.getElementById('regForm_name').value = name;
+
+        const emailField = document.getElementById('regForm_email');
+        if (emailField) {
+            emailField.value = email;
+            emailField.readOnly = false;
+            emailField.removeAttribute('readonly');
+        }
+
+        document.getElementById('regForm_mobile').value = mobile;
+        document.getElementById('regForm_course').value = course;
+        document.getElementById('regForm_branch').value = branch;
+
+        const form = document.getElementById('updateRegForm');
+        form.action = `/accounts/registration/${id}/update/`;
+
+        $('#updateRegModal').modal('show');
+    }
+
+    function submitCancel() {
+        if (confirm('Are you sure you want to cancel your registration for this event? This action cannot be undone.')) {
+            const form = document.getElementById('cancelRegForm');
+            form.action = `/accounts/registration/${currentRegId}/cancel/`;
+            form.submit();
+        }
+    }
+</script>
+{% endblock %}

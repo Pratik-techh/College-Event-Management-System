@@ -14,78 +14,146 @@ function getCSRFToken() {
     return csrfCookie ? csrfCookie.split('=')[1] : '';
 }
 
-async function loadEvents() {
-    let events = [];
-    const eventList = document.getElementById('event-list');
-    const completedEventList = document.getElementById('completed-event-list');
+let _allEvents = []; // Global cache for events
 
-    // Try to load events from Django API first
+async function loadEvents() {
+    const eventList = document.getElementById('event-list');
+    const noEvents = document.getElementById('no-events');
+    if (!eventList) return;
+
+    // Remove skeleton loaders
+    document.querySelectorAll('.skeleton-wrapper').forEach(el => el.remove());
+
+    let events = [];
+    let registeredEventIds = [];
+    window.myRegistrations = [];
+
     try {
-        const response = await fetch('/api/events/');
+        // Load upcoming events
+        const response = await fetch('/api/events/?filter=upcoming');
         if (response.ok) {
-            events = await response.json();
-            console.log('Events loaded from backend:', events.length);
-        } else {
-            console.warn('Failed to load events from API, falling back to localStorage');
-            events = JSON.parse(localStorage.getItem('events')) || [];
+            const data = await response.json();
+            events = data;
+            window._allEvents = data;
+        }
+
+        // Load current user's registrations if logged in
+        if (window.userLoggedIn) {
+            const regResponse = await fetch('/api/user/registrations/');
+            if (regResponse.ok) {
+                const regData = await regResponse.json();
+                registeredEventIds = regData.registered_event_ids || [];
+                window.myRegistrations = regData.registrations || [];
+            }
         }
     } catch (error) {
-        console.warn('Error loading events from API, using localStorage', error);
-        events = JSON.parse(localStorage.getItem('events')) || [];
+        console.warn('Error loading data from API:', error);
     }
 
-    if (eventList && completedEventList) {
-        eventList.innerHTML = '';
-        completedEventList.innerHTML = '';
+    eventList.innerHTML = '';
 
-        const currentDate = new Date();
+    if (events.length === 0) {
+        if (noEvents) noEvents.style.display = 'block';
+        return;
+    }
 
-        events.forEach(event => {
-            // Simple date comparison: compare date strings directly
-            const today = new Date();
-            const todayStr = today.toISOString().split('T')[0]; // Format: YYYY-MM-DD
+    events.forEach(function (event, index) {
+        var countdownId = 'countdown-' + event.id;
+        var isRegistered = registeredEventIds.includes(event.id);
+        var registration = isRegistered ? window.myRegistrations.find(r => r.event_id === event.id) : null;
 
-            // Compare dates as strings (works because YYYY-MM-DD format sorts correctly)
-            const isCompleted = event.date < todayStr;
+        var card = '<div class="col-md-4 mb-5 event-item"'
+            + ' data-name="' + event.name.toLowerCase() + '"'
+            + ' data-venue="' + event.venue.toLowerCase() + '"'
+            + ' data-aos="fade-up" data-aos-delay="' + ((index % 3) * 100) + '">'
+            + '<div class="event-card premium-glass-card shadow-hover">'
 
-            console.log(`Event: ${event.name}, Date: ${event.date}, Today: ${todayStr}, Completed: ${isCompleted}`);
+            // Image banner with overlay
+            + '<div class="event-image-container">'
+            + '<img src="' + fixUnsplashUrl(event.image) + '"'
+            + '     alt="' + event.name + '"'
+            + '     class="event-img-zoom">'
+            + '<div class="event-overlay-gradient"></div>'
+            + '<span class="event-status-pill">UPCOMING</span>'
+            + (window.userIsStaff ? '<span class="admin-badge-pill"><i class="fas fa-shield-halved"></i> Admin Mode</span>' : '')
+            + '</div>'
 
-            const targetList = isCompleted ? completedEventList : eventList;
+            // Card body
+            + '<div class="card-body event-card-content">'
+            + '<h5 class="event-title-premium">' + event.name + '</h5>'
+            + '<p class="event-desc-premium">'
+            + (event.description.length > 90 ? event.description.substring(0, 90) + '...' : event.description)
+            + '</p>'
 
-            const eventCard = `
-                <div class="col-md-4 mb-4">
-                    <div class="event-card card ${isCompleted ? 'completed' : ''}">
-                        <img src="${event.image || 'https://images.unsplash.com/photo-1540575467063-178a50c2df87?auto=format&fit=crop&w=800'}" class="card-img-top" alt="${event.name}">
-                        <div class="card-body">
-                            <h5 class="card-title">${event.name}</h5>
-                            <p class="card-text">${event.description}</p>
-                            <div class="event-details">
-                                <div class="detail">
-                                    <i class="fas fa-map-marker-alt"></i>
-                                    <span>${event.venue}</span>
-                                </div>
-                                <div class="detail">
-                                    <i class="far fa-calendar-alt"></i>
-                                    <span>${formatDate(event.date)}</span>
-                                </div>
-                                ${event.time ? `
-                                <div class="detail">
-                                    <i class="far fa-clock"></i>
-                                    <span>${formatTime(event.time)}</span>
-                                </div>
-                                ` : ''}
-                            </div>
-                            ${isCompleted ?
-                    '<div class="completed-badge">Event Completed</div>' :
-                    `<button class="btn btn-primary btn-block mt-3 register-btn" data-event-id="${event.id}">
-                                    Register Now
-                                </button>`
-                }
-                        </div>
-                    </div>
-                </div>
-            `;
-            targetList.innerHTML += eventCard;
+            // ── Countdown timer ──
+            + '<div class="event-countdown-wrapper">'
+            + '<div class="event-countdown" id="' + countdownId + '">⏳ Initializing...</div>'
+            + '</div>'
+
+            // Event Details Grid
+            + '<div class="event-details-grid">'
+            + '<div class="detail-item"><i class="fas fa-calendar-alt"></i> <span>' + formatDate(event.date) + '</span></div>'
+            + (event.time ? '<div class="detail-item"><i class="fas fa-clock"></i> <span>' + formatTime(event.time) + '</span></div>' : '')
+            + '<div class="detail-item"><i class="fas fa-map-marker-alt"></i> <span>' + event.venue + '</span></div>'
+            + '</div>'
+
+            // Primary Action
+            + (isRegistered ?
+                '<div class="action-stack">'
+                + '<button class="btn btn-registered-success w-100">'
+                + '<i class="fas fa-check-circle mr-2"></i> Registered'
+                + '</button>'
+                + '<button class="btn btn-edit-premium w-100 mt-2 btn-edit-info" '
+                + '        data-reg-id="' + registration.id + '"'
+                + '        data-event-id="' + event.id + '">'
+                + '<i class="fas fa-pen-nib mr-2"></i> Modify details'
+                + '</button>'
+                + '</div>'
+                :
+                '<button class="btn btn-register-premium w-100 register-btn"'
+                + '        data-event-id="' + event.id + '">'
+                + '<i class="fas fa-bolt mr-2"></i> Register Now'
+                + '</button>'
+            )
+
+            // Admin Secondary Actions (Side-by-Side)
+            + (window.userIsStaff ?
+                '<div class="admin-action-group">'
+                + '<button class="btn-admin-tool update" onclick="editEvent(' + event.id + ')" title="Update Event">'
+                + '<i class="fas fa-pen-to-square"></i> Update'
+                + '</button>'
+                + '<button class="btn-admin-tool delete" onclick="deleteEvent(' + event.id + ')" title="Delete Event">'
+                + '<i class="fas fa-trash-can"></i> Delete'
+                + '</button>'
+                + '</div>'
+                : '')
+
+            + '</div></div></div>';
+
+        eventList.innerHTML += card;
+
+        // Start countdown after the card is injected
+        if (window.startCountdown) {
+            setTimeout(function () {
+                startCountdown(countdownId, event.date);
+            }, 50 * (index + 1));
+        }
+    });
+
+    // Re-initialise AOS for dynamically added cards
+    if (window.AOS) AOS.refresh();
+
+    // Live search filtering
+    const searchInput = document.getElementById('eventSearch');
+    if (searchInput) {
+        searchInput.addEventListener('input', function () {
+            const q = this.value.toLowerCase();
+            document.querySelectorAll('.event-item').forEach(item => {
+                const match = item.dataset.name.includes(q) || item.dataset.venue.includes(q);
+                item.style.display = match ? '' : 'none';
+            });
+            const visible = document.querySelectorAll('.event-item[style=""]');
+            if (noEvents) noEvents.style.display = visible.length === 0 ? 'block' : 'none';
         });
     }
 }
@@ -103,18 +171,48 @@ function formatTime(timeStr) {
     });
 }
 
-function registerForEvent(eventId) {
-    console.log('Register button clicked for event ID:', eventId);
-    const form = document.getElementById('registrationForm');
-    if (form) {
-        form.reset();
-        document.getElementById('selectedEventId').value = eventId;
-        console.log('Opening registration modal...');
-        $('#registrationModal').modal('show');
-    } else {
-        console.error('Registration form not found');
-        alert('Error: Registration form not found. Please refresh the page.');
+function fixUnsplashUrl(url) {
+    if (!url) return 'https://images.unsplash.com/photo-1540575467063-178a50c2df87?auto=format&fit=crop&w=800';
+
+    // If it's a direct Unsplash image URL or already formatted, leave it
+    if (url.includes('images.unsplash.com')) return url;
+
+    // If it's an Unsplash photo page link (e.g., https://unsplash.com/photos/...)
+    if (url.includes('unsplash.com/photos/')) {
+        const parts = url.split('/');
+        const lastPart = parts[parts.length - 1];
+        const photoId = lastPart.includes('-') ? lastPart.split('-').pop() : lastPart;
+        return `https://unsplash.com/photos/${photoId}/download?force=true&w=800`;
     }
+
+    return url;
+}
+
+function registerForEvent(eventId) {
+    console.log('Opening registration modal for event:', eventId);
+    const modal = $('#registrationModal');
+    const form = document.getElementById('registrationForm');
+    if (!form) return;
+
+    // Reset to register mode
+    form.reset();
+    form.onsubmit = submitRegistration;
+    form.dataset.updateMode = 'false';
+    const emailField = document.getElementById('reg_email');
+    if (emailField) {
+        emailField.readOnly = false;
+        emailField.removeAttribute('readonly');
+    }
+
+    modal.find('.modal-title').html('<i class="fas fa-ticket-alt mr-2"></i> Register for Event');
+    modal.find('button[type="submit"]').text('Register Now').removeClass('btn-primary').addClass('btn-success');
+
+    // Hide auto-fill badge if it exists (will be re-added by fetchStudentProfile)
+    const badge = document.getElementById('autoFillBadge');
+    if (badge) badge.remove();
+
+    document.getElementById('selectedEventId').value = eventId;
+    modal.modal('show');
 }
 
 async function submitRegistration(event) {
@@ -129,8 +227,9 @@ async function submitRegistration(event) {
         errorDisplay.textContent = '';
 
         const eventId = document.getElementById('selectedEventId').value;
-        const studentName = form.studentName.value.trim();
-        const email = form.email.value.trim();
+        const studentName = document.getElementById('studentName').value.trim();
+        const emailField = document.getElementById('reg_email');
+        const email = emailField ? emailField.value.trim() : '';
         const mobile = form.mobile.value.trim();
         const course = form.course.value.trim();
         const branch = form.branch.value.trim();
@@ -188,19 +287,206 @@ async function submitRegistration(event) {
             // Check if response contains error message
             if (text.includes('already registered')) {
                 throw new Error('You have already registered for this event.');
-            } else if (text.includes('Please fill in all required fields')) {
-                throw new Error('Please fill in all required fields.');
             } else {
                 throw new Error('Registration failed. Please try again.');
             }
         }
-
     } catch (error) {
         console.error('Error during registration:', error);
         errorDisplay.textContent = error.message;
         errorDisplay.classList.remove('d-none');
     }
 }
+
+/* ══════════════════════════════════════════════════════════════
+   ADMIN CRUD OPERATIONS (for side-by-side buttons)
+   ══════════════════════════════════════════════════════════════ */
+
+function editEvent(eventId) {
+    const event = window._allEvents.find(e => e.id == eventId);
+    if (!event) return;
+
+    const modal = $('#eventModal');
+    if (!modal.length) return;
+
+    document.getElementById('eventId').value = event.id;
+    document.getElementById('eventName').value = event.name;
+    document.getElementById('eventVenue').value = event.venue;
+    document.getElementById('eventDescription').value = event.description;
+    document.getElementById('eventDate').value = event.date;
+    document.getElementById('eventImage').value = event.image || '';
+
+    modal.modal('show');
+}
+
+async function saveEvent() {
+    const form = document.getElementById('eventForm');
+    if (!form.checkValidity()) return form.reportValidity();
+
+    const id = document.getElementById('eventId').value;
+    const data = {
+        name: document.getElementById('eventName').value,
+        venue: document.getElementById('eventVenue').value,
+        description: document.getElementById('eventDescription').value,
+        date: document.getElementById('eventDate').value,
+        image: document.getElementById('eventImage').value
+    };
+
+    try {
+        const response = await fetch(`/api/events/${id}/update/`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRFToken': getCSRFToken()
+            },
+            body: JSON.stringify(data)
+        });
+
+        const result = await response.json();
+        if (result.success) {
+            $('#eventModal').modal('hide');
+            Swal.fire({
+                icon: 'success',
+                title: 'Event Updated!',
+                text: 'The event details have been successfully updated.',
+                timer: 1500,
+                showConfirmButton: false,
+                confirmButtonColor: '#6366f1'
+            }).then(() => loadEvents());
+        } else {
+            Swal.fire({
+                icon: 'error',
+                title: 'Update Failed',
+                text: result.error || 'Failed to update event.',
+                confirmButtonColor: '#6366f1'
+            });
+        }
+    } catch (error) {
+        console.error('Error updating event:', error);
+        Swal.fire('Error', 'An unexpected error occurred while saving.', 'error');
+    }
+}
+
+async function deleteEvent(eventId) {
+    const result = await Swal.fire({
+        title: 'Delete Event?',
+        text: "This will permanently remove the event and all associated registrations. This action cannot be undone!",
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonColor: '#ef4444',
+        cancelButtonColor: '#64748b',
+        confirmButtonText: 'Yes, delete it',
+        cancelButtonText: 'Cancel'
+    });
+
+    if (result.isConfirmed) {
+        try {
+            const response = await fetch(`/api/events/${eventId}/delete/`, {
+                method: 'POST',
+                headers: {
+                    'X-CSRFToken': getCSRFToken()
+                }
+            });
+            const data = await response.json();
+            if (data.success) {
+                Swal.fire({
+                    icon: 'success',
+                    title: 'Deleted!',
+                    text: 'The event has been successfully removed.',
+                    timer: 1500,
+                    showConfirmButton: false
+                }).then(() => loadEvents());
+            } else {
+                Swal.fire('Error', data.error || 'Failed to delete event.', 'error');
+            }
+        } catch (error) {
+            console.error('Error deleting event:', error);
+            Swal.fire('Error', 'An unexpected error occurred during deletion.', 'error');
+        }
+    }
+}
+
+async function updateExistingRegistration(event) {
+    event.preventDefault();
+    const form = event.target;
+    const regId = form.dataset.regId;
+    const errorDisplay = document.getElementById('registrationError');
+
+    try {
+        errorDisplay.classList.add('d-none');
+        const formData = new FormData();
+        formData.append('name', form.studentName.value.trim());
+        const emailField = document.getElementById('reg_email');
+        if (emailField) {
+            formData.append('email', emailField.value.trim());
+        }
+        formData.append('mobile', form.mobile.value.trim());
+        formData.append('course', form.course.value.trim());
+        formData.append('branch', form.branch.value.trim());
+        formData.append('csrfmiddlewaretoken', getCSRFToken());
+
+        const response = await fetch(`/accounts/registration/${regId}/update/`, {
+            method: 'POST',
+            body: formData,
+            headers: { 'X-Requested-With': 'XMLHttpRequest' }
+        });
+
+        if (response.ok) {
+            $('#registrationModal').modal('hide');
+            Swal.fire({
+                icon: 'success',
+                title: 'Info Updated!',
+                text: 'Your registration details have been updated.',
+                timer: 2000,
+                showConfirmButton: false
+            }).then(() => {
+                window.location.reload();
+            });
+        } else {
+            const text = await response.text();
+            throw new Error(text || 'Update failed');
+        }
+    } catch (error) {
+        errorDisplay.textContent = error.message;
+        errorDisplay.classList.remove('d-none');
+    }
+}
+
+// Global registry for edit info buttons
+$(document).on('click', '.btn-edit-info', function () {
+    const regId = $(this).data('reg-id');
+    const eventId = $(this).data('event-id');
+
+    // Find the registration data
+    const reg = window.myRegistrations.find(r => r.id == regId);
+    if (!reg) return;
+
+    // Repurpose registration modal
+    const modal = $('#registrationModal');
+    modal.find('.modal-title').html('<i class="fas fa-edit mr-2"></i> Edit Registration Info');
+    modal.find('button[type="submit"]').text('Save Changes');
+
+    const form = document.getElementById('registrationForm');
+    form.dataset.updateMode = 'true';
+    form.dataset.regId = regId;
+
+    // Fill fields
+    form.studentName.value = reg.name;
+    const emailField = document.getElementById('reg_email');
+    if (emailField) {
+        emailField.value = reg.email;
+        emailField.readOnly = false;
+        emailField.removeAttribute('readonly');
+    }
+    form.mobile.value = reg.mobile;
+    form.course.value = reg.course;
+    form.branch.value = reg.branch;
+
+    // Change onsubmit
+    form.onsubmit = updateExistingRegistration;
+
+    modal.modal('show');
+});
 
 
 function generateTicketId() {
@@ -441,16 +727,139 @@ function initializeDefaultEvents() {
     }
 }
 
-// Call initializeDefaultEvents when the page loads
-document.addEventListener('DOMContentLoaded', () => {
-    initializeDefaultEvents();
-    loadEvents();
+// ══════════════════════════════════════════════════════════════
+// DOMContentLoaded — wire everything up
+// ══════════════════════════════════════════════════════════════
+document.addEventListener('DOMContentLoaded', function () {
 
-    // Event delegation for register buttons (since they're created dynamically)
+    // ── Page Progress Bar ─────────────────────────────────────
+    var bar = document.getElementById('pageProgress');
+    if (bar) {
+        bar.style.width = '40%';               // jump to 40% immediately
+        setTimeout(function () {
+            bar.style.width = '70%';           // simulate loading
+        }, 200);
+        setTimeout(function () {
+            bar.style.width = '100%';          // complete
+            setTimeout(function () {
+                bar.style.opacity = '0';
+                bar.style.transition = 'width 0.4s ease, opacity 0.5s ease';
+            }, 400);
+        }, 700);
+    }
+
+    // ── Scroll-to-Top Button ──────────────────────────────────
+    var scrollBtn = document.getElementById('scrollTopBtn');
+    if (scrollBtn) {
+        window.addEventListener('scroll', function () {
+            if (window.scrollY > 300) {
+                scrollBtn.style.opacity = '1';
+                scrollBtn.style.transform = 'translateY(0) scale(1)';
+            } else {
+                scrollBtn.style.opacity = '0';
+                scrollBtn.style.transform = 'translateY(20px) scale(0.8)';
+            }
+        });
+    }
+
+    // ── Toast click-to-dismiss ────────────────────────────────
     document.addEventListener('click', function (e) {
-        if (e.target && e.target.classList.contains('register-btn')) {
-            const eventId = e.target.getAttribute('data-event-id');
-            registerForEvent(eventId);
+        var toast = e.target.closest('.toast-msg');
+        if (toast) {
+            toast.style.transition = 'opacity 0.25s, transform 0.25s';
+            toast.style.opacity = '0';
+            toast.style.transform = 'translateX(80px)';
+            setTimeout(function () { toast.remove(); }, 260);
         }
     });
+
+    // ── Hamburger aria-expanded watcher ──────────────────────
+    // Bootstrap 4 updates aria-expanded automatically; CSS reads it.
+    // Nothing extra needed.
+
+    // ── Auto-fill registration modal from student profile ────
+    // Fetches /api/user/profile/ once and stores result.
+    // When the modal opens (openRegistrationModal called), fills fields.
+    var _cachedProfile = null;
+
+    function fetchStudentProfile() {
+        if (_cachedProfile !== null) return Promise.resolve(_cachedProfile);
+        return fetch('/api/user/profile/')
+            .then(function (r) { return r.json(); })
+            .then(function (data) {
+                _cachedProfile = data;
+                return data;
+            })
+            .catch(function () {
+                _cachedProfile = { authenticated: false };
+                return _cachedProfile;
+            });
+    }
+
+    function autoFillModal(profile) {
+        if (!profile || !profile.authenticated) return;
+        var fields = {
+            studentName: profile.name,
+            reg_email: profile.email,
+            mobile: profile.mobile,
+        };
+        Object.keys(fields).forEach(function (id) {
+            var el = document.getElementById(id);
+            if (el && fields[id]) el.value = fields[id];
+        });
+        // Course and Branch: set select value
+        ['course', 'branch'].forEach(function (id) {
+            var sel = document.getElementById(id);
+            if (sel && profile[id]) {
+                for (var i = 0; i < sel.options.length; i++) {
+                    if (sel.options[i].value === profile[id]) {
+                        sel.selectedIndex = i;
+                        break;
+                    }
+                }
+            }
+        });
+        // Show a subtle badge if auto-filled
+        var badge = document.getElementById('autoFillBadge');
+        if (!badge) {
+            badge = document.createElement('div');
+            badge.id = 'autoFillBadge';
+            badge.style.cssText = [
+                'background:linear-gradient(135deg,rgba(99,102,241,0.1),rgba(236,72,153,0.1))',
+                'border:1px solid rgba(99,102,241,0.25)',
+                'border-radius:10px',
+                'padding:8px 14px',
+                'font-size:13px',
+                'color:#6366f1',
+                'font-weight:600',
+                'margin-bottom:16px',
+                'display:flex',
+                'align-items:center',
+                'gap:8px'
+            ].join(';');
+            badge.innerHTML = '⚡ Auto-filled from your profile — <a href="/accounts/dashboard/" style="color:#ec4899;margin-left:4px;">edit profile</a>';
+            var form = document.getElementById('registrationForm');
+            if (form) form.insertBefore(badge, form.firstChild);
+        }
+    }
+
+    // Pre-fetch profile as soon as page loads (for zero-delay auto-fill)
+    fetchStudentProfile();
+
+    // Hook into the register button click to trigger auto-fill on modal open
+    document.addEventListener('click', function (e) {
+        if (e.target && e.target.classList.contains('register-btn')) {
+            var eventId = e.target.getAttribute('data-event-id');
+            registerForEvent(eventId);
+            // Auto-fill after a short delay (allow modal to open/render)
+            setTimeout(function () {
+                fetchStudentProfile().then(autoFillModal);
+            }, 300);
+        }
+    });
+
+    // ── Legacy: init default events + loadEvents ──────────────
+    initializeDefaultEvents();
+    loadEvents();
 });
+
