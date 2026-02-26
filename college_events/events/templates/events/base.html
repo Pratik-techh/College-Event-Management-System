@@ -429,7 +429,23 @@
                 e.preventDefault();
                 var currentTheme = document.documentElement.getAttribute('data-theme') || 'light';
                 var newTheme = currentTheme === 'light' ? 'dark' : 'light';
-                applyTheme(newTheme);
+
+                // Setup coordinates for the circular reveal animation
+                var x = e.clientX;
+                var y = e.clientY;
+                document.documentElement.style.setProperty('--click-x', x + 'px');
+                document.documentElement.style.setProperty('--click-y', y + 'px');
+
+                // Execute modern View Transition if supported
+                if (document.startViewTransition) {
+                    document.startViewTransition(function () {
+                        applyTheme(newTheme);
+                    });
+                } else {
+                    // Fallback for older browsers
+                    applyTheme(newTheme);
+                }
+
                 showToast(`✨ Switched to ${newTheme.charAt(0).toUpperCase() + newTheme.slice(1)} Mode`, 'info', 2000);
             });
         }

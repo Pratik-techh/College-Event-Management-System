@@ -2353,3 +2353,34 @@ html[data-theme="light"] .btn-spl-glass:hover {
 }
 
 /* End Home Page Styles */
+
+/* ── Stunning View Transitions API Theme Switch ── */
+::view-transition-group(root) {
+    animation-duration: 0.8s;
+    animation-timing-function: cubic-bezier(0.25, 1, 0.3, 1);
+}
+
+::view-transition-new(root) {
+    animation: clip-reveal 0.8s cubic-bezier(0.25, 1, 0.3, 1) forwards;
+}
+
+::view-transition-old(root) {
+    animation: none;
+    z-index: -1;
+}
+
+/* The expanding circle clip-path from the button coordinates */
+@keyframes clip-reveal {
+    0% {
+        clip-path: circle(0px at var(--click-x, 50%) var(--click-y, 50%));
+    }
+
+    100% {
+        clip-path: circle(150% at var(--click-x, 50%) var(--click-y, 50%));
+    }
+}
+
+/* Disable generic transitions to prevent jank during the View Transition */
+.theme-transitioning * {
+    transition: none !important;
+}
