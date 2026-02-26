@@ -369,12 +369,24 @@ def student_dashboard(request):
     ).select_related('event').order_by('-timestamp')
 
     today = datetime.date.today()
-    upcoming = [r for r in my_registrations if r.event.date >= today]
-    completed = [r for r in my_registrations if r.event.date < today]
+    upcoming = []
+    completed = []
 
-    # Add days remaining for upcoming events
-    for r in upcoming:
-        r.days_remaining = (r.event.date - today).days
+    for r in my_registrations:
+        if isinstance(r.event.date, str):
+            try:
+                 ev_date = datetime.datetime.strptime(r.event.date, "%Y-%m-%d").date()
+            except ValueError:
+                 ev_date = r.event.date
+        else:
+            ev_date = r.event.date
+
+        if ev_date >= today:
+            r.days_remaining = (ev_date - today).days
+            upcoming.append(r)
+        else:
+            completed.append(r)
+
 
     return render(request, 'events/student_dashboard.html', {
         'profile':   profile,
