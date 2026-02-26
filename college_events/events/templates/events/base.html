@@ -259,26 +259,12 @@
                     </li>
                     {% endif %}
 
-                    <!-- Theme Selection Dropdown -->
-                    <li class="nav-item dropdown ml-1">
-                        <button class="theme-toggle" id="themeToggle" data-toggle="dropdown" aria-haspopup="true"
-                            aria-expanded="false" title="Switch Theme">
+                    <!-- One-Click Theme Toggle -->
+                    <li class="nav-item ml-1">
+                        <button class="theme-toggle" id="themeToggleBtn" title="Toggle Dark/Light Mode"
+                            style="border-radius:50%; border:2px solid rgba(99, 102, 241, 0.25); background:transparent; width:44px; height:44px; display:flex; align-items:center; justify-content:center; cursor:pointer; font-size:18px; margin-left:8px; transition:all 0.3s cubic-bezier(0.4, 0, 0.2, 1);">
                             <span id="themeIcon">🌙</span>
                         </button>
-                        <div class="dropdown-menu dropdown-menu-right theme-dropdown"
-                            style="border-radius:18px; border:none; box-shadow:0 10px 40px rgba(0,0,0,0.15); padding:10px; min-width:160px; margin-top:10px;">
-                            <h6 class="dropdown-header"
-                                style="font-weight:800; color:#64748b; font-size:11px; text-transform:uppercase; letter-spacing:1px; margin-bottom:5px;">
-                                Select Aesthetics</h6>
-                            <a class="dropdown-item theme-opt" href="#" data-theme="light"
-                                style="border-radius:10px; padding:10px 14px; font-weight:600; display:flex; align-items:center; gap:10px;">
-                                <span style="font-size:16px;">☀️</span> Light Mode
-                            </a>
-                            <a class="dropdown-item theme-opt" href="#" data-theme="dark"
-                                style="border-radius:10px; padding:10px 14px; font-weight:600; display:flex; align-items:center; gap:10px;">
-                                <span style="font-size:16px;">🌙</span> Dark Mode
-                            </a>
-                        </div>
                     </li>
                 </ul>
             </div>
@@ -437,14 +423,16 @@
         })();
 
         // Theme Switcher Events
-        document.querySelectorAll('.theme-opt').forEach(opt => {
-            opt.addEventListener('click', function (e) {
+        var themeToggleBtn = document.getElementById('themeToggleBtn');
+        if (themeToggleBtn) {
+            themeToggleBtn.addEventListener('click', function (e) {
                 e.preventDefault();
-                var theme = this.getAttribute('data-theme');
-                applyTheme(theme);
-                showToast(`✨ Switched to ${theme.charAt(0).toUpperCase() + theme.slice(1)} Mode`, 'info', 2000);
+                var currentTheme = document.documentElement.getAttribute('data-theme') || 'light';
+                var newTheme = currentTheme === 'light' ? 'dark' : 'light';
+                applyTheme(newTheme);
+                showToast(`✨ Switched to ${newTheme.charAt(0).toUpperCase() + newTheme.slice(1)} Mode`, 'info', 2000);
             });
-        });
+        }
 
         // ── Countdown timer function (used by event_list page) ──
         function startCountdown(elementId, eventDateStr) {
