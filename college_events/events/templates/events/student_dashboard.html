@@ -543,15 +543,15 @@
                                 <label>Course</label>
                                 <select name="course">
                                     <option value="">Select course</option>
-                                    <option value="B.Tech" {% if profile.course=="B.Tech" %}selected{% endif %}>B.Tech
+                                    <option value="B.Tech" {% if profile.course == "B.Tech" %}selected{% endif %}>B.Tech
                                     </option>
-                                    <option value="M.Tech" {% if profile.course=="M.Tech" %}selected{% endif %}>M.Tech
+                                    <option value="M.Tech" {% if profile.course == "M.Tech" %}selected{% endif %}>M.Tech
                                     </option>
-                                    <option value="BCA" {% if profile.course=="BCA" %}selected{% endif %}>BCA</option>
-                                    <option value="MCA" {% if profile.course=="MCA" %}selected{% endif %}>MCA</option>
-                                    <option value="BSc" {% if profile.course=="BSc" %}selected{% endif %}>BSc</option>
-                                    <option value="MBA" {% if profile.course=="MBA" %}selected{% endif %}>MBA</option>
-                                    <option value="Other" {% if profile.course=="Other" %}selected{% endif %}>Other
+                                    <option value="BCA" {% if profile.course == "BCA" %}selected{% endif %}>BCA</option>
+                                    <option value="MCA" {% if profile.course == "MCA" %}selected{% endif %}>MCA</option>
+                                    <option value="BSc" {% if profile.course == "BSc" %}selected{% endif %}>BSc</option>
+                                    <option value="MBA" {% if profile.course == "MBA" %}selected{% endif %}>MBA</option>
+                                    <option value="Other" {% if profile.course == "Other" %}selected{% endif %}>Other
                                     </option>
                                 </select>
                             </div>
@@ -559,15 +559,15 @@
                                 <label>Year</label>
                                 <select name="year">
                                     <option value="">Select year</option>
-                                    <option value="1st Year" {% if profile.year=="1st Year" %}selected{% endif %}>1st
+                                    <option value="1st Year" {% if profile.year == "1st Year" %}selected{% endif %}>1st
                                         Year</option>
-                                    <option value="2nd Year" {% if profile.year=="2nd Year" %}selected{% endif %}>2nd
+                                    <option value="2nd Year" {% if profile.year == "2nd Year" %}selected{% endif %}>2nd
                                         Year</option>
-                                    <option value="3rd Year" {% if profile.year=="3rd Year" %}selected{% endif %}>3rd
+                                    <option value="3rd Year" {% if profile.year == "3rd Year" %}selected{% endif %}>3rd
                                         Year</option>
-                                    <option value="4th Year" {% if profile.year=="4th Year" %}selected{% endif %}>4th
+                                    <option value="4th Year" {% if profile.year == "4th Year" %}selected{% endif %}>4th
                                         Year</option>
-                                    <option value="Alumni" {% if profile.year=="Alumni" %}selected{% endif %}>Alumni
+                                    <option value="Alumni" {% if profile.year == "Alumni" %}selected{% endif %}>Alumni
                                     </option>
                                 </select>
                             </div>
@@ -576,16 +576,15 @@
                             <label>Branch</label>
                             <select name="branch">
                                 <option value="">Select branch</option>
-                                <option value="Computer Science" {% if profile.branch=="Computer Science" %}selected{%
+                                <option value="Computer Science" {% if profile.branch == "Computer Science" %}selected{%
                                     endif %}>Computer Science</option>
-                                <option value="Information Technology" {% if profile.branch=="Information Technology"
-                                    %}selected{% endif %}>Information Technology</option>
-                                <option value="Electronics" {% if profile.branch=="Electronics" %}selected{% endif %}>
+                                <option value="Information Technology" {% if profile.branch == "Information Technology" %}selected{% endif %}>Information Technology</option>
+                                <option value="Electronics" {% if profile.branch == "Electronics" %}selected{% endif %}>
                                     Electronics</option>
-                                <option value="Mechanical" {% if profile.branch=="Mechanical" %}selected{% endif %}>
+                                <option value="Mechanical" {% if profile.branch == "Mechanical" %}selected{% endif %}>
                                     Mechanical</option>
-                                <option value="Civil" {% if profile.branch=="Civil" %}selected{% endif %}>Civil</option>
-                                <option value="Other" {% if profile.branch=="Other" %}selected{% endif %}>Other</option>
+                                <option value="Civil" {% if profile.branch == "Civil" %}selected{% endif %}>Civil</option>
+                                <option value="Other" {% if profile.branch == "Other" %}selected{% endif %}>Other</option>
                             </select>
                         </div>
 
