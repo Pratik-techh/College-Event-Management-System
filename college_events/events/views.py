@@ -1,6 +1,6 @@
 from django.shortcuts import render, get_object_or_404, redirect
 from django.contrib.auth import authenticate, login, logout
-from django.contrib.auth.decorators import login_required
+from django.contrib.auth.decorators import login_required, user_passes_test
 from django.contrib.auth.models import User
 from django.contrib import messages
 from django.http import JsonResponse
@@ -11,6 +11,9 @@ from .models import Event, Registration, StudentProfile
 import json
 import datetime
 import random
+
+def is_admin(user):
+    return user.is_authenticated and (user.is_staff or user.is_superuser)
 
 def homepage(request):
     """Landing homepage — hero, stats, features only. No event lists."""
@@ -62,6 +65,10 @@ def register(request, event_id):
     """Register a student for a specific event via AJAX or form."""
     event = get_object_or_404(Event, id=event_id)
 
+    if event.date < datetime.date.today():
+        messages.error(request, 'Registration for this event is closed.')
+        return redirect('event_list')
+
     if request.method == 'POST':
         name   = request.POST.get('name', '').strip()
         email  = request.POST.get('email', '').strip()
@@ -102,15 +109,15 @@ def admin_login_view(request):
         password = request.POST.get('password')
         
         user = authenticate(request, username=username, password=password)
-        if user is not None:
+        if user is not None and (user.is_staff or user.is_superuser):
             login(request, user)
             return redirect('admin_panel')
         else:
-            messages.error(request, 'Invalid username or password.')
+            messages.error(request, 'Invalid admin credentials.')
     
     return render(request, 'events/admin-login.html')
 
-@login_required
+@user_passes_test(is_admin, login_url="/admin-login/")
 def admin_panel(request):
     """Render the admin panel page after successful login."""
     registrations = Registration.objects.all().select_related('event').order_by('-timestamp')
@@ -124,7 +131,7 @@ def admin_panel(request):
     }
     return render(request, 'events/admin-panel.html', context)
 
-@login_required
+@user_passes_test(is_admin, login_url="/admin-login/")
 def admin_logout_view(request):
     """Handle admin logout."""
     logout(request)
@@ -162,6 +169,7 @@ def get_events_api(request):
 @login_required
 @csrf_exempt
 @require_http_methods(["POST"])
+@user_passes_test(is_admin, login_url="/admin-login/")
 def create_event_api(request):
     """API endpoint to create a new event."""
     try:
@@ -192,6 +200,7 @@ def create_event_api(request):
 @login_required
 @csrf_exempt
 @require_http_methods(["PUT", "POST"])  # Allow POST for compatibility
+@user_passes_test(is_admin, login_url="/admin-login/")
 def update_event_api(request, event_id):
     """API endpoint to update an existing event."""
     try:
@@ -224,6 +233,7 @@ def update_event_api(request, event_id):
 @login_required
 @csrf_exempt
 @require_http_methods(["DELETE", "POST"])  # Allow POST for compatibility  
+@user_passes_test(is_admin, login_url="/admin-login/")
 def delete_event_api(request, event_id):
     """API endpoint to delete an event."""
     try:
@@ -233,6 +243,7 @@ def delete_event_api(request, event_id):
     except Exception as e:
         return JsonResponse({'success': False, 'error': str(e)}, status=400)
 
+@user_passes_test(is_admin)
 @require_http_methods(["GET"])
 def get_registrations_api(request):
     """JSON API endpoint to fetch all registrations for admin panel."""
@@ -382,16 +393,16 @@ def student_update_profile(request):
         defaults={'avatar_color': random.choice(AVATAR_COLORS)}
     )
     user = request.user
-    user.first_name = request.POST.get('first_name', user.first_name).strip()
-    user.last_name  = request.POST.get('last_name', user.last_name).strip()
-    user.email      = request.POST.get('email', user.email).strip()
+    user.first_name = request.POST.get('first_name', user.first_name or '').strip()
+    user.last_name  = request.POST.get('last_name', user.last_name or '').strip()
+    user.email      = request.POST.get('email', user.email or '').strip()
     user.save()
 
-    profile.mobile = request.POST.get('mobile', profile.mobile).strip()
-    profile.course = request.POST.get('course', profile.course).strip()
-    profile.branch = request.POST.get('branch', profile.branch).strip()
-    profile.year   = request.POST.get('year', profile.year).strip()
-    profile.bio    = request.POST.get('bio', profile.bio).strip()
+    profile.mobile = request.POST.get('mobile', profile.mobile or '').strip()
+    profile.course = request.POST.get('course', profile.course or '').strip()
+    profile.branch = request.POST.get('branch', profile.branch or '').strip()
+    profile.year   = request.POST.get('year', profile.year or '').strip()
+    profile.bio    = request.POST.get('bio', profile.bio or '').strip()
     profile.save()
 
     messages.success(request, 'Profile updated successfully! ✅')
