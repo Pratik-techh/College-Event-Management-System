@@ -259,9 +259,17 @@
                     </li>
                     {% endif %}
 
-                    <!-- One-Click Theme Toggle (Smooth Expanding Ripple) -->
+                    <!-- One-Click Theme Toggle (Ultra-Smooth Native Fluid Wipe) -->
                     <li class="nav-item ml-1">
                         <style>
+                            html.theme-transitioning,
+                            html.theme-transitioning *,
+                            html.theme-transitioning *:before,
+                            html.theme-transitioning *:after {
+                                transition: background-color 0.5s ease-in-out, color 0.5s ease-in-out, border-color 0.5s ease-in-out, box-shadow 0.5s ease-in-out !important;
+                                transition-delay: 0s !important;
+                            }
+
                             .btn-theme-toggle {
                                 border-radius: 50%;
                                 border: 2px solid rgba(99, 102, 241, 0.25);
@@ -493,51 +501,17 @@
                 var currentTheme = document.documentElement.getAttribute('data-theme') || 'light';
                 var newTheme = currentTheme === 'light' ? 'dark' : 'light';
 
-                // Get click coordinates manually
-                var x = e.clientX;
-                var y = e.clientY;
+                // Apply fluid transition class across the entire DOM
+                document.documentElement.classList.add('theme-transitioning');
 
-                // Create expanding circle overlay fallback
-                var overlay = document.createElement('div');
-                var maxDim = Math.max(window.innerWidth, window.innerHeight) * 2.5;
+                // Swap the theme variables, instantly triggering the 0.5s smooth transition above
+                applyTheme(newTheme);
+                showToast(`✨ Switched to ${newTheme.charAt(0).toUpperCase() + newTheme.slice(1)} Mode`, 'info', 2000);
 
-                overlay.style.position = 'fixed';
-                overlay.style.left = x + 'px';
-                overlay.style.top = y + 'px';
-                overlay.style.width = '0px';
-                overlay.style.height = '0px';
-                overlay.style.borderRadius = '50%';
-                overlay.style.zIndex = '999998';  // high z-index
-                overlay.style.pointerEvents = 'none';
-                overlay.style.transform = 'translate(-50%, -50%)';
-
-                // Pick the background of the NEW theme color exactly
-                overlay.style.backgroundColor = newTheme === 'dark' ? '#0f172a' : '#f8fafc';
-                overlay.style.transition = 'width 0.8s cubic-bezier(0.86, 0, 0.07, 1), height 0.8s cubic-bezier(0.86, 0, 0.07, 1), opacity 0.8s ease-out';
-
-                document.body.appendChild(overlay);
-
-                // Trigger reflow
-                void overlay.offsetWidth;
-
-                // Expand animation
-                overlay.style.width = maxDim + 'px';
-                overlay.style.height = maxDim + 'px';
-                overlay.style.opacity = '1';
-
-                // Mid-way through animation, instantly swap the actual theme variables underneath
+                // Disengage the transition lock after animation completes to restore normal snappy web performance
                 setTimeout(function () {
-                    applyTheme(newTheme);
-                    showToast(`✨ Switched to ${newTheme.charAt(0).toUpperCase() + newTheme.slice(1)} Mode`, 'info', 2000);
-                }, 400);
-
-                // Fade out and remove the overlay completely
-                setTimeout(function () {
-                    overlay.style.opacity = '0';
-                    setTimeout(function () {
-                        overlay.remove();
-                    }, 800);
-                }, 800);
+                    document.documentElement.classList.remove('theme-transitioning');
+                }, 500);
             });
         }
 
