@@ -1,6 +1,30 @@
 {% extends 'events/base.html' %}
 {% load static %}
-{% block title %}My Dashboard — CollegeEvents{% endblock %}
+{% block title %}My Dashboard — CollegeEvents
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        var courseVal = "{{ profile.course|escapejs }}";
+        var yearVal = "{{ profile.year|escapejs }}";
+        var branchVal = "{{ profile.branch|escapejs }}";
+
+        if (courseVal) {
+            var el = document.getElementById("id_course");
+            if (el) el.value = courseVal;
+        }
+        if (yearVal) {
+            var el = document.getElementById("id_year");
+            if (el) el.value = yearVal;
+        }
+        if (branchVal) {
+            var el = document.getElementById("id_branch");
+            if (el) el.value = branchVal;
+        }
+    });
+</script>
+{% endblock %}
 
 {% block extra_css %}
 <style>
@@ -541,51 +565,49 @@
                         <div class="profile-field-group">
                             <div class="profile-field">
                                 <label>Course</label>
-                                <select name="course">
+                                <select name="course" id="id_course">
                                     <option value="">Select course</option>
-                                    <option value="B.Tech" {% if profile.course=="B.Tech" %}selected{% endif %}>B.Tech
+                                    <option value="B.Tech">B.Tech
                                     </option>
-                                    <option value="M.Tech" {% if profile.course=="M.Tech" %}selected{% endif %}>M.Tech
+                                    <option value="M.Tech">M.Tech
                                     </option>
-                                    <option value="BCA" {% if profile.course=="BCA" %}selected{% endif %}>BCA</option>
-                                    <option value="MCA" {% if profile.course=="MCA" %}selected{% endif %}>MCA</option>
-                                    <option value="BSc" {% if profile.course=="BSc" %}selected{% endif %}>BSc</option>
-                                    <option value="MBA" {% if profile.course=="MBA" %}selected{% endif %}>MBA</option>
-                                    <option value="Other" {% if profile.course=="Other" %}selected{% endif %}>Other
+                                    <option value="BCA">BCA</option>
+                                    <option value="MCA">MCA</option>
+                                    <option value="BSc">BSc</option>
+                                    <option value="MBA">MBA</option>
+                                    <option value="Other">Other
                                     </option>
                                 </select>
                             </div>
                             <div class="profile-field">
                                 <label>Year</label>
-                                <select name="year">
+                                <select name="year" id="id_year">
                                     <option value="">Select year</option>
-                                    <option value="1st Year" {% if profile.year=="1st Year" %}selected{% endif %}>1st
+                                    <option value="1st Year">1st
                                         Year</option>
-                                    <option value="2nd Year" {% if profile.year=="2nd Year" %}selected{% endif %}>2nd
+                                    <option value="2nd Year">2nd
                                         Year</option>
-                                    <option value="3rd Year" {% if profile.year=="3rd Year" %}selected{% endif %}>3rd
+                                    <option value="3rd Year">3rd
                                         Year</option>
-                                    <option value="4th Year" {% if profile.year=="4th Year" %}selected{% endif %}>4th
+                                    <option value="4th Year">4th
                                         Year</option>
-                                    <option value="Alumni" {% if profile.year=="Alumni" %}selected{% endif %}>Alumni
+                                    <option value="Alumni">Alumni
                                     </option>
                                 </select>
                             </div>
                         </div>
                         <div class="profile-field">
                             <label>Branch</label>
-                            <select name="branch">
+                            <select name="branch" id="id_branch">
                                 <option value="">Select branch</option>
-                                <option value="Computer Science" {% if profile.branch=="Computer Science" %}selected{%
-                                    endif %}>Computer Science</option>
-                                <option value="Information Technology" {% if profile.branch=="Information Technology"
-                                    %}selected{% endif %}>Information Technology</option>
-                                <option value="Electronics" {% if profile.branch=="Electronics" %}selected{% endif %}>
+                                <option value="Computer Science">Computer Science</option>
+                                <option value="Information Technology">Information Technology</option>
+                                <option value="Electronics">
                                     Electronics</option>
-                                <option value="Mechanical" {% if profile.branch=="Mechanical" %}selected{% endif %}>
+                                <option value="Mechanical">
                                     Mechanical</option>
-                                <option value="Civil" {% if profile.branch=="Civil" %}selected{% endif %}>Civil</option>
-                                <option value="Other" {% if profile.branch=="Other" %}selected{% endif %}>Other</option>
+                                <option value="Civil">Civil</option>
+                                <option value="Other">Other</option>
                             </select>
                         </div>
 
