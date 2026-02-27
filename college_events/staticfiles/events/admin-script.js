@@ -194,7 +194,7 @@ function renderRegistrationsSection() {
                                 <td><div class="font-weight-bold">${r.name}</div><div style="font-size:11px;color:#94a3b8;">Ref: #${r.id}</div></td>
                                 <td><div>${r.email}</div><div style="font-size:11px;color:#64748b;">${r.mobile}</div></td>
                                 <td><div>${r.course}</div><div style="font-size:11px;color:#64748b;">${r.branch}</div></td>
-                                <td><code class="p-1 bg-light rounded">${r.ticket_id}</code></td>
+                                <td><span style="background:rgba(255,255,255,0.1); color:#f8fafc; font-family:monospace; font-size:12px; font-weight:600; padding:6px 10px; border-radius:6px; letter-spacing:1px; border:1px solid rgba(255,255,255,0.15);">${r.ticket_id}</span></td>
                             </tr>
                         `).join('')}
                     </tbody>

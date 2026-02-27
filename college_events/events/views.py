@@ -256,8 +256,8 @@ def get_registrations_api(request):
     for reg in registrations_list:
         reg['timestamp']   = reg['timestamp'].strftime('%Y-%m-%d %H:%M:%S')
         reg['event__date'] = reg['event__date'].strftime('%Y-%m-%d')
-        # Generate a synthetic ticket ID for the scanner
-        reg['ticket_id']   = f"CE-{reg['event__id']}-{reg['id']}"
+        # Generate a professional looking ticket ID for the scanner
+        reg['ticket_id'] = f"TKT-{reg['event__id']:03d}-{reg['id']:04d}"
 
     response = JsonResponse(registrations_list, safe=False)
     response['Cache-Control'] = 'no-cache, no-store, must-revalidate'
