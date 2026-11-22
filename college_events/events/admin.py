@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import Event, Registration
+from .models import Event, Registration, ContactMessage
 
 @admin.register(Event)
 class EventAdmin(admin.ModelAdmin):
@@ -15,5 +15,13 @@ class RegistrationAdmin(admin.ModelAdmin):
     list_filter = ['event', 'course', 'timestamp']
     search_fields = ['name', 'email', 'mobile', 'event__name']
     date_hierarchy = 'timestamp'
+    readonly_fields = ['timestamp']
+    ordering = ['-timestamp']
+
+@admin.register(ContactMessage)
+class ContactMessageAdmin(admin.ModelAdmin):
+    list_display = ['name', 'email', 'subject', 'timestamp', 'is_read']
+    list_filter = ['is_read', 'timestamp']
+    search_fields = ['name', 'email', 'subject']
     readonly_fields = ['timestamp']
     ordering = ['-timestamp']

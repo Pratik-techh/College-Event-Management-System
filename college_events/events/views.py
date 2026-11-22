@@ -7,7 +7,7 @@ from django.http import JsonResponse
 from django.views.decorators.http import require_http_methods
 from django.views.decorators.csrf import csrf_exempt
 from django.utils import timezone
-from .models import Event, Registration, StudentProfile
+from .models import Event, Registration, StudentProfile, ContactMessage
 import json
 import datetime
 import random
@@ -56,7 +56,19 @@ def about(request):
 def contact(request):
     """Contact page."""
     if request.method == 'POST':
-        messages.success(request, 'Your message has been sent! We will get back to you soon.')
+        name = request.POST.get('name')
+        email = request.POST.get('email')
+        subject = request.POST.get('subject')
+        message = request.POST.get('message')
+        
+        if name and email and message:
+            ContactMessage.objects.create(
+                name=name, email=email, subject=subject, message=message
+            )
+            messages.success(request, 'Your message has been sent! We will get back to you soon.')
+        else:
+            messages.error(request, 'Please fill in all required fields.')
+            
         return redirect('contact')
     return render(request, 'events/contact.html')
 
@@ -122,12 +134,15 @@ def admin_panel(request):
     """Render the admin panel page after successful login."""
     registrations = Registration.objects.all().select_related('event').order_by('-timestamp')
     events = Event.objects.all()
+    contact_messages = ContactMessage.objects.all().order_by('-timestamp')
     
     context = {
         'registrations': registrations,
         'events': events,
+        'contact_messages': contact_messages,
         'total_registrations': registrations.count(),
         'total_events': events.count(),
+        'total_messages': contact_messages.count(),
     }
     return render(request, 'events/admin-panel.html', context)
 

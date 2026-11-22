@@ -6,11 +6,21 @@
 <style>
     .auth-wrapper {
         min-height: 100vh;
-        background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 50%, #ec4899 100%);
+        background: url('{% static "events/premium-students.png" %}') center/cover no-repeat fixed;
         display: flex;
         align-items: center;
         justify-content: center;
         padding: 100px 16px 60px;
+        position: relative;
+    }
+
+    .auth-wrapper::before {
+        content: '';
+        position: absolute;
+        inset: 0;
+        background: rgba(248, 250, 252, 0.88);
+        backdrop-filter: blur(10px);
+        z-index: 0;
     }
 
     .auth-card {
@@ -21,6 +31,8 @@
         width: 100%;
         max-width: 560px;
         animation: slideUp 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+        position: relative;
+        z-index: 1;
     }
 
     @keyframes slideUp {
@@ -166,6 +178,12 @@
     }
 
     /* Theme Adaptive Overrides */
+    html[data-theme="dark"] .auth-wrapper::before,
+    html[data-theme="midnight"] .auth-wrapper::before,
+    html[data-theme="forest"] .auth-wrapper::before {
+        background: rgba(15, 23, 42, 0.88);
+    }
+
     html[data-theme="dark"] .auth-card,
     html[data-theme="midnight"] .auth-card,
     html[data-theme="forest"] .auth-card {
@@ -296,13 +314,15 @@
                     <label>Course</label>
                     <select name="course">
                         <option value="">Select course</option>
-                        <option value="B.Tech" {% if request.POST.course == "B.Tech" %}selected{% endif %}>B.Tech</option>
-                        <option value="M.Tech" {% if request.POST.course == "M.Tech" %}selected{% endif %}>M.Tech</option>
-                        <option value="BCA" {% if request.POST.course == "BCA" %}selected{% endif %}>BCA</option>
-                        <option value="MCA" {% if request.POST.course == "MCA" %}selected{% endif %}>MCA</option>
-                        <option value="BSc" {% if request.POST.course == "BSc" %}selected{% endif %}>BSc</option>
-                        <option value="MBA" {% if request.POST.course == "MBA" %}selected{% endif %}>MBA</option>
-                        <option value="Other" {% if request.POST.course == "Other" %}selected{% endif %}>Other</option>
+                        <option value="B.Tech" {% if 'B.Tech' in request.POST.course %}selected{% endif %}>B.Tech
+                        </option>
+                        <option value="M.Tech" {% if 'M.Tech' in request.POST.course %}selected{% endif %}>M.Tech
+                        </option>
+                        <option value="BCA" {% if 'BCA' in request.POST.course %}selected{% endif %}>BCA</option>
+                        <option value="MCA" {% if 'MCA' in request.POST.course %}selected{% endif %}>MCA</option>
+                        <option value="BSc" {% if 'BSc' in request.POST.course %}selected{% endif %}>BSc</option>
+                        <option value="MBA" {% if 'MBA' in request.POST.course %}selected{% endif %}>MBA</option>
+                        <option value="Other" {% if 'Other' in request.POST.course %}selected{% endif %}>Other</option>
                     </select>
                 </div>
                 <div class="form-group">

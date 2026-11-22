@@ -1,46 +1,93 @@
 // Export functions for admin panel
 // These functions use the global 'registrations' array loaded by admin-script.js
 
-function exportToExcel() {
+function getQrBase64(text) {
+    const tempDiv = document.createElement('div');
+    new QRCode(tempDiv, {
+        text: text,
+        width: 100,
+        height: 100,
+        correctLevel: QRCode.CorrectLevel.M
+    });
+    const canvas = tempDiv.querySelector('canvas');
+    if (canvas) return canvas.toDataURL('image/png');
+    return null;
+}
+
+async function exportToExcel() {
     if (!window.registrations || registrations.length === 0) {
         alert('No registrations to export.');
         return;
     }
 
-    // Group registrations by event
+    if (!window.ExcelJS) {
+        alert('ExcelJS is not loaded.');
+        return;
+    }
+
     const groupedRegistrations = {};
     registrations.forEach(reg => {
-        const eventName = reg.event__name;
+        const eventName = reg.event__name || 'Event';
         if (!groupedRegistrations[eventName]) {
             groupedRegistrations[eventName] = [];
         }
         groupedRegistrations[eventName].push(reg);
     });
 
-    const wb = XLSX.utils.book_new();
+    const wb = new ExcelJS.Workbook();
 
-    Object.entries(groupedRegistrations).forEach(([eventName, eventRegistrations]) => {
-        const wsData = eventRegistrations.map(reg => ({
-            'Ticket ID': reg.ticket_id,
-            'Student Name': reg.name,
-            'Email': reg.email,
-            'Course': reg.course,
-            'Branch': reg.branch,
-            'Mobile': reg.mobile,
-            'Registration Date': reg.timestamp,
-            'Event': reg.event__name,
-            'Event Date': reg.event__date,
-            'Venue': reg.event__venue
-        }));
+    for (const [eventName, eventRegistrations] of Object.entries(groupedRegistrations)) {
+        const sheetName = eventName.substring(0, 31).replace(/[\[\]\*\\\?\:\/]/g, '');
+        const ws = wb.addWorksheet(sheetName);
 
-        const ws = XLSX.utils.json_to_sheet(wsData);
+        ws.columns = [
+            { header: 'QR Code', key: 'qr', width: 12 },
+            { header: 'Ticket ID', key: 'ticket_id', width: 20 },
+            { header: 'Student Name', key: 'name', width: 25 },
+            { header: 'Email', key: 'email', width: 30 },
+            { header: 'Course', key: 'course', width: 15 },
+            { header: 'Branch', key: 'branch', width: 25 },
+            { header: 'Mobile', key: 'mobile', width: 15 },
+            { header: 'Registration Date', key: 'timestamp', width: 22 },
+            { header: 'Venue', key: 'venue', width: 20 }
+        ];
 
-        // Truncate sheet name to 31 characters (Excel limit)
-        const sheetName = eventName.substring(0, 31);
-        XLSX.utils.book_append_sheet(wb, ws, sheetName);
-    });
+        ws.getRow(1).font = { bold: true };
 
-    XLSX.writeFile(wb, 'event_registrations.xlsx');
+        eventRegistrations.forEach((reg, index) => {
+            const rowNumber = index + 2;
+            const r = ws.addRow({
+                qr: '',
+                ticket_id: reg.ticket_id,
+                name: reg.name,
+                email: reg.email,
+                course: reg.course,
+                branch: reg.branch,
+                mobile: reg.mobile,
+                timestamp: reg.timestamp,
+                venue: reg.event__venue
+            });
+
+            r.height = 65;
+            r.alignment = { vertical: 'middle', horizontal: 'left', wrapText: true };
+
+            const qrBase64 = getQrBase64(reg.ticket_id);
+            if (qrBase64) {
+                const imageId = wb.addImage({
+                    base64: qrBase64,
+                    extension: 'png',
+                });
+                ws.addImage(imageId, {
+                    tl: { col: 0, row: rowNumber - 1 },
+                    ext: { width: 70, height: 70 },
+                    editAs: 'oneCell'
+                });
+            }
+        });
+    }
+
+    const buffer = await wb.xlsx.writeBuffer();
+    saveAs(new Blob([buffer]), 'event_registrations.xlsx');
 }
 
 function exportToPDF() {
@@ -64,7 +111,6 @@ function exportToPDF() {
         doc.text('Event Registrations Report', 15, yOffset);
         yOffset += 15;
 
-        // Group registrations by event
         const groupedRegistrations = {};
         registrations.forEach(reg => {
             const eventId = reg.event__id;
@@ -93,6 +139,7 @@ function exportToPDF() {
             yOffset += 8;
 
             const columns = [
+                { header: 'QR', dataKey: 'qr' },
                 { header: 'Ticket ID', dataKey: 'ticket_id' },
                 { header: 'Name', dataKey: 'name' },
                 { header: 'Email', dataKey: 'email' },
@@ -103,13 +150,15 @@ function exportToPDF() {
             ];
 
             const data = group.registrations.map(reg => ({
+                qr: '', // Empty space for QR code rendering
                 ticket_id: reg.ticket_id,
                 name: reg.name,
                 email: reg.email,
                 course: reg.course,
                 branch: reg.branch,
                 mobile: reg.mobile,
-                date: reg.timestamp
+                date: reg.timestamp,
+                qrData: getQrBase64(reg.ticket_id) // Add QR data object to the raw model
             }));
 
             doc.autoTable({
@@ -126,10 +175,26 @@ function exportToPDF() {
                 },
                 bodyStyles: {
                     fontSize: 9,
-                    textColor: [73, 80, 87]
+                    textColor: [73, 80, 87],
+                    minCellHeight: 18, // Make row height bigger to fit QR codes
+                    valign: 'middle'
+                },
+                columnStyles: {
+                    qr: { cellWidth: 16 }
                 },
                 alternateRowStyles: {
                     fillColor: [249, 250, 251]
+                },
+                didDrawCell: function (data) {
+                    // Render the QR code when drawing the 'qr' body cell
+                    if (data.section === 'body' && data.column.dataKey === 'qr' && data.cell.raw !== null) {
+                        const qrDataUrl = data.row.raw.qrData;
+                        if (qrDataUrl) {
+                            const x = data.cell.x + 2;
+                            const y = data.cell.y + 2;
+                            doc.addImage(qrDataUrl, 'PNG', x, y, 12, 12);
+                        }
+                    }
                 },
                 didDrawPage: function (data) {
                     doc.setFontSize(8);

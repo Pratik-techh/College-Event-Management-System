@@ -101,3 +101,17 @@ class Registration(models.Model):
     class Meta:
         ordering = ['-timestamp']
         unique_together = ['event', 'email']
+
+class ContactMessage(models.Model):
+    name = models.CharField(max_length=100)
+    email = models.EmailField()
+    subject = models.CharField(max_length=100)
+    message = models.TextField()
+    timestamp = models.DateTimeField(auto_now_add=True)
+    is_read = models.BooleanField(default=False)
+
+    def __str__(self):
+        return f"Message from {self.name} - {self.subject}"
+
+    class Meta:
+        ordering = ['-timestamp']

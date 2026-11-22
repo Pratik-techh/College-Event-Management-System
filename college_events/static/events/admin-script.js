@@ -27,7 +27,8 @@ function showSection(sectionName, element = null) {
         'dashboard': 'Overview',
         'events': 'Manage Events',
         'registrations': 'Registrations',
-        'scanner': 'Ticket Scanner'
+        'scanner': 'Ticket Scanner',
+        'contact_messages': 'Contact Messages'
     };
     document.getElementById('pageTitle').textContent = titles[sectionName] || 'Admin Panel';
 

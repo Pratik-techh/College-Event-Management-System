@@ -660,10 +660,24 @@
             <div class="modal-footer premium-modal-footer" style="padding:20px 30px 30px;">
                 <button type="button" class="btn" data-dismiss="modal"
                     style="border-radius:50px;border:2px solid #e2e8f0;padding:10px 24px;font-weight:600;color:#64748b;">Close</button>
-                <button type="button" class="btn" onclick="downloadTicket()"
-                    style="background:linear-gradient(135deg,#6366f1,#ec4899);color:#fff;border-radius:50px;padding:10px 30px;font-weight:700;border:none;">
-                    <i class="fas fa-download mr-1"></i> Download Ticket
-                </button>
+
+                <!-- Dropdown for multiple download formats -->
+                <div class="dropdown d-inline-block">
+                    <button class="btn dropdown-toggle" type="button" id="downloadTicketDropdown" data-toggle="dropdown"
+                        aria-haspopup="true" aria-expanded="false"
+                        style="background:linear-gradient(135deg,#6366f1,#ec4899);color:#fff;border-radius:50px;padding:10px 30px;font-weight:700;border:none;">
+                        <i class="fas fa-download mr-1"></i> Download Ticket
+                    </button>
+                    <div class="dropdown-menu dropdown-menu-right" aria-labelledby="downloadTicketDropdown"
+                        style="border-radius:12px; border:none; box-shadow:0 10px 30px rgba(0,0,0,0.1);">
+                        <a class="dropdown-item py-2" href="#" onclick="downloadTicketPDF()"><i
+                                class="fas fa-file-pdf mr-2" style="color:#ef4444;"></i> Save as PDF</a>
+                        <a class="dropdown-item py-2" href="#" onclick="downloadTicketExcel()"><i
+                                class="fas fa-file-excel mr-2" style="color:#10b981;"></i> Save as Excel</a>
+                        <a class="dropdown-item py-2" href="#" onclick="downloadTicketPNG()"><i
+                                class="fas fa-file-image mr-2" style="color:#6366f1;"></i> Save as Image (PNG)</a>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
@@ -751,6 +765,9 @@
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
 <script src="https://html2canvas.hertzen.com/dist/html2canvas.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/exceljs/4.3.0/exceljs.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/FileSaver.js/2.0.5/FileSaver.min.js"></script>
 <script>
     let currentRegId = null;
 
@@ -822,7 +839,7 @@
                     </div>
                     <div>
                         <label style="display:block; font-size:10px; color:#94a3b8; font-weight:700; text-transform:uppercase; margin-bottom:2px;">Ticket ID</label>
-                        <span class="reg-card-name" style="font-size:14px; font-weight:700;">CE-${eventId}-${regId}</span>
+                        <span class="reg-card-name" style="font-size:14px; font-weight:700;">TKT-${String(eventId).padStart(3, '0')}-${String(regId).padStart(4, '0')}</span>
                     </div>
                     <div>
                         <label style="display:block; font-size:10px; color:#94a3b8; font-weight:700; text-transform:uppercase; margin-bottom:2px;">Course</label>
@@ -841,7 +858,7 @@
         `;
 
         new QRCode(document.getElementById(`qrcode-${regId}`), {
-            text: `CE-${eventId}-${regId}`,
+            text: `TKT-${String(eventId).padStart(3, '0')}-${String(regId).padStart(4, '0')}`,
             width: 70,
             height: 70,
             colorDark: "#0f172a",
@@ -852,7 +869,7 @@
         $('#ticketModal').modal('show');
     }
 
-    function downloadTicket() {
+    function downloadTicketPNG() {
         const el = document.querySelector('#ticketPreview > .ticket');
         if (!el) return;
         html2canvas(el, {
@@ -864,6 +881,67 @@
             link.href = canvas.toDataURL('image/png');
             link.click();
         });
+    }
+
+    function downloadTicketPDF() {
+        const el = document.querySelector('#ticketPreview > .ticket');
+        if (!el) return;
+        html2canvas(el, { scale: 2, backgroundColor: null }).then(canvas => {
+            const { jsPDF } = window.jspdf;
+            const pdf = new jsPDF('p', 'mm', 'a5');
+            const imgData = canvas.toDataURL('image/png');
+            const pdfWidth = pdf.internal.pageSize.getWidth();
+            const imgProps = pdf.getImageProperties(imgData);
+            const pdfHeight = (imgProps.height * pdfWidth) / imgProps.width;
+
+            pdf.addImage(imgData, 'PNG', 0, 0, pdfWidth, pdfHeight);
+            pdf.save('CollegeEvents-Ticket.pdf');
+        });
+    }
+
+    async function downloadTicketExcel() {
+        // Use ExcelJS to create a simple Excel file containing the ticket info and QR code
+        if (!window.ExcelJS) {
+            alert('Excel export library not loaded.');
+            return;
+        }
+
+        const wb = new ExcelJS.Workbook();
+        const ws = wb.addWorksheet('Ticket');
+
+        // Add text data
+        const eventName = document.getElementById('modalEventName').innerText || 'Tech Event';
+        const nameInput = document.getElementById('regForm_name').value;
+        const ticketId = 'TKT-' + String(currentRegId).padStart(4, '0');
+
+        ws.addRow(['CollegeEvents Official Ticket']);
+        ws.addRow(['Event Name', eventName]);
+        ws.addRow(['Attendee Name', nameInput]);
+        ws.addRow(['Ticket ID', ticketId]);
+        ws.addRow(['Status', 'REGISTERED ✅']);
+        ws.getColumn(1).width = 25;
+        ws.getColumn(2).width = 40;
+
+        // Try getting QR code base64 from the ticket
+        const qrCanvas = document.querySelector(`#qrcode-${currentRegId} canvas`);
+        if (qrCanvas) {
+            const base64Image = qrCanvas.toDataURL('image/png');
+            const imageId = wb.addImage({
+                base64: base64Image,
+                extension: 'png',
+            });
+            ws.addImage(imageId, {
+                tl: { col: 1, row: 6 },
+                ext: { width: 150, height: 150 }
+            });
+        }
+
+        const buffer = await wb.xlsx.writeBuffer();
+        const blob = new Blob([buffer], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' });
+        const link = document.createElement('a');
+        link.href = URL.createObjectURL(blob);
+        link.download = 'CollegeEvents-Ticket.xlsx';
+        link.click();
     }
 
     function openUpdateModal(id, eventName, name, email, mobile, course, branch) {

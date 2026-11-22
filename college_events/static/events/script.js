@@ -57,14 +57,25 @@ async function loadEvents() {
         return;
     }
 
+    function detectEventCategory(ev) {
+        const txt = ((ev.name || '') + ' ' + (ev.description || '') + ' ' + (ev.venue || '')).toLowerCase();
+        if (txt.includes('workshop') || txt.includes('bootcamp') || txt.includes('masterclass') || txt.includes('hands-on')) return 'workshop';
+        if (txt.includes('cricket') || txt.includes('basketball') || txt.includes('football') || txt.includes('sports') || txt.includes('wrestling') || txt.includes('fencing') || txt.includes('trophy') || txt.includes('cup') || txt.includes('slam dunk')) return 'sports';
+        if (txt.includes('cultural') || txt.includes('music') || txt.includes('dance') || txt.includes('theat') || txt.includes('drama') || txt.includes('fest') || txt.includes('gala') || txt.includes('photo') || txt.includes('arts')) return 'cultural';
+        return 'technical';
+    }
+
     events.forEach(function (event, index) {
         var countdownId = 'countdown-' + event.id;
         var isRegistered = registeredEventIds.includes(event.id);
         var registration = isRegistered ? window.myRegistrations.find(r => r.event_id === event.id) : null;
+        var cat = detectEventCategory(event);
 
         var card = '<div class="col-md-4 mb-5 event-item"'
             + ' data-name="' + event.name.toLowerCase() + '"'
             + ' data-venue="' + event.venue.toLowerCase() + '"'
+            + ' data-desc="' + (event.description || '').toLowerCase() + '"'
+            + ' data-category="' + cat + '"'
             + ' data-aos="fade-up" data-aos-delay="' + ((index % 3) * 100) + '">'
             + '<div class="event-card premium-glass-card shadow-hover">'
 
@@ -143,19 +154,47 @@ async function loadEvents() {
     // Re-initialise AOS for dynamically added cards
     if (window.AOS) AOS.refresh();
 
-    // Live search filtering
+    // Live search & category filtering
     const searchInput = document.getElementById('eventSearch');
-    if (searchInput) {
-        searchInput.addEventListener('input', function () {
-            const q = this.value.toLowerCase();
-            document.querySelectorAll('.event-item').forEach(item => {
-                const match = item.dataset.name.includes(q) || item.dataset.venue.includes(q);
-                item.style.display = match ? '' : 'none';
-            });
-            const visible = document.querySelectorAll('.event-item[style=""]');
-            if (noEvents) noEvents.style.display = visible.length === 0 ? 'block' : 'none';
+
+    function applyEventFilters() {
+        const q = (searchInput ? searchInput.value : '').toLowerCase().trim();
+        const activeTab = document.querySelector('.filter-tab.active');
+        const selectedCategory = activeTab ? activeTab.dataset.filter : 'all';
+
+        let visibleCount = 0;
+        document.querySelectorAll('.event-item').forEach(item => {
+            const name = item.dataset.name || '';
+            const venue = item.dataset.venue || '';
+            const desc = item.dataset.desc || '';
+            const itemCat = item.dataset.category || 'all';
+
+            const matchesSearch = !q || name.includes(q) || venue.includes(q) || desc.includes(q);
+            const matchesCategory = (selectedCategory === 'all') || (itemCat === selectedCategory);
+
+            if (matchesSearch && matchesCategory) {
+                item.style.display = '';
+                visibleCount++;
+            } else {
+                item.style.display = 'none';
+            }
         });
+
+        const noEventsEl = document.getElementById('no-events');
+        if (noEventsEl) noEventsEl.style.display = visibleCount === 0 ? 'block' : 'none';
     }
+
+    if (searchInput) {
+        searchInput.addEventListener('input', applyEventFilters);
+    }
+
+    document.querySelectorAll('.filter-tab').forEach(tab => {
+        tab.addEventListener('click', function () {
+            document.querySelectorAll('.filter-tab').forEach(t => t.classList.remove('active'));
+            this.classList.add('active');
+            applyEventFilters();
+        });
+    });
 }
 
 

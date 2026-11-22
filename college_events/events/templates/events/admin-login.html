@@ -24,20 +24,69 @@
 
         body {
             font-family: 'Poppins', sans-serif;
-            background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+            background: url('{% static "events/premium-students.png" %}') center/cover fixed;
             min-height: 100vh;
             display: flex;
             align-items: center;
             justify-content: center;
+            position: relative;
+        }
+
+        body::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: rgba(248, 250, 252, 0.88);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            z-index: 0;
+        }
+
+        [data-theme="dark"] body::before,
+        [data-theme="midnight"] body::before,
+        [data-theme="forest"] body::before {
+            background: rgba(15, 23, 42, 0.88);
         }
 
         .login-container {
-            background: white;
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.5);
             border-radius: 20px;
             padding: 40px;
             box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
             width: 100%;
             max-width: 400px;
+            position: relative;
+            z-index: 1;
+        }
+
+        [data-theme="dark"] .login-container,
+        [data-theme="midnight"] .login-container,
+        [data-theme="forest"] .login-container {
+            background: rgba(30, 41, 59, 0.95);
+            border-color: rgba(255, 255, 255, 0.1);
+        }
+
+        [data-theme="dark"] .login-header h2,
+        [data-theme="midnight"] .login-header h2,
+        [data-theme="forest"] .login-header h2 {
+            color: #ffffff;
+        }
+
+        [data-theme="dark"] p,
+        [data-theme="midnight"] p,
+        [data-theme="forest"] p {
+            color: #94a3b8;
+        }
+
+        [data-theme="dark"] .form-control,
+        [data-theme="midnight"] .form-control,
+        [data-theme="forest"] .form-control {
+            background-color: rgba(15, 23, 42, 0.5);
+            border-color: rgba(255, 255, 255, 0.1);
+            color: #f8fafc;
         }
 
         .login-header {
@@ -136,6 +185,7 @@
     <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.4/dist/umd/popper.min.js"></script>
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+    <script src="{% static 'events/script.js' %}"></script>
 </body>
 
 </html>

@@ -1,4 +1,4 @@
-﻿{% extends 'events/base.html' %}
+{% extends 'events/base.html' %}
 {% load static %}
 
 {% block title %}CollegeEvents — Discover Amazing College Events{% endblock %}
@@ -8,10 +8,10 @@ campus activities.{% endblock %}
 {% block content %}
 
 <!-- ══════════════ HERO ══════════════ -->
-<section class="hero position-relative">
-    <div class="container hero-content-layer">
-        <div class="row align-items-center">
-            <div class="col-lg-6" data-aos="fade-up">
+<section class="hero position-relative full-screen-hero">
+    <div class="container-fluid hero-content-layer px-3 px-sm-4 px-md-5 px-xl-5">
+        <div class="row align-items-center justify-content-between">
+            <div class="col-lg-6 col-xl-6 hero-text-col" data-aos="fade-up">
                 <span class="badge badge-primary mb-3 hero-super-badge">✨ Elite College Experience</span>
                 <h1 class="hero-huge-title">Discover <span class="text-gradient-brand">Amazing</span><br>College Events
                 </h1>
@@ -42,8 +42,8 @@ campus activities.{% endblock %}
                     </div>
                 </div>
             </div>
-            <div class="col-lg-6 mt-5 mt-lg-0 position-relative" data-aos="fade-left" data-aos-delay="200">
-                <div class="hero-image-wrapper" data-tilt data-tilt-max="10" data-tilt-speed="400"
+            <div class="col-lg-6 col-xl-6 mt-4 mt-lg-0 position-relative hero-media-col" data-aos="fade-left" data-aos-delay="200">
+                <div class="hero-image-wrapper ml-lg-auto" data-tilt data-tilt-max="10" data-tilt-speed="400"
                     data-tilt-perspective="1000">
                     <div class="hero-image-glow-backdrop"></div>
                     <img src="{% static 'events/premium-students.png' %}" alt="Students at college events"
@@ -69,8 +69,8 @@ campus activities.{% endblock %}
 
 <!-- ══════════════ QUICK NAVIGATION CARDS ══════════════ -->
 <!-- Explore Section -->
-<section style="padding: 80px 0;">
-    <div class="container">
+<section class="homepage-section" style="padding: 80px 0;">
+    <div class="container container-wide">
         <div class="text-center mb-5" data-aos="fade-up">
             <span class="badge badge-primary mb-4"
                 style="background:linear-gradient(135deg,#6366f1,#ec4899);color:#fff;padding:12px 24px;border-radius:50px;font-weight:700;font-size:13px;text-transform:uppercase;letter-spacing:1px;">Explore</span>
@@ -166,8 +166,8 @@ campus activities.{% endblock %}
 <!-- ══════════════ FEATURED UPCOMING EVENTS TEASER ══════════════ -->
 {% if featured_events %}
 <!-- Featured Events Section -->
-<section style="padding: 80px 0;">
-    <div class="container">
+<section class="homepage-section" style="padding: 80px 0;">
+    <div class="container container-wide">
         <div class="text-center mb-5" data-aos="fade-up">
             <span class="badge badge-primary mb-4"
                 style="background:var(--gradient-brand);color:#fff;padding:12px 24px;border-radius:50px;font-weight:700;font-size:13px;text-transform:uppercase;letter-spacing:1px;">Don't
@@ -210,8 +210,8 @@ campus activities.{% endblock %}
 {% endif %}
 
 <!-- ══════════════ FEATURES ══════════════ -->
-<section class="features-section premium-features bg-light-gradient">
-    <div class="container">
+<section class="features-section premium-features bg-light-gradient homepage-section">
+    <div class="container container-wide">
         <div class="text-center mb-5" data-aos="fade-up">
             <span class="badge badge-primary mb-4 hero-super-badge"
                 style="background:var(--gradient-brand); padding:10px 20px;">OUR

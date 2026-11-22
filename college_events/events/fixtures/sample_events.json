@@ -1,0 +1,206 @@
+[
+{
+  "model": "events.event",
+  "pk": 1,
+  "fields": {
+    "name": "Annual Tech Symposium",
+    "description": "A day-long technical symposium featuring workshops, coding competitions, and tech talks.",
+    "date": "2025-12-19",
+    "time": null,
+    "venue": "Main Auditorium",
+    "image": "https://images.unsplash.com/photo-1540575467063-178a50c2df87?auto=format&fit=crop&w=800"
+  }
+},
+{
+  "model": "events.event",
+  "pk": 2,
+  "fields": {
+    "name": "Cultural Fest 2025",
+    "description": "Annual cultural festival with music, dance, and theatrical performances.",
+    "date": "2026-01-03",
+    "time": null,
+    "venue": "College Ground",
+    "image": "https://cdn.shopify.com/s/files/1/0385/6229/files/Anthony_Ulanovsky_-_2025_Festival_Schedule_2-min.jpg?v=1736620212"
+  }
+},
+{
+  "model": "events.event",
+  "pk": 3,
+  "fields": {
+    "name": "Winter Sports Meet",
+    "description": "Inter-college sports competition featuring various indoor and outdoor games.",
+    "date": "2026-01-18",
+    "time": null,
+    "venue": "Sports Complex",
+    "image": "https://www.ldmountaincentre.com/blog/wp-content/uploads/2018/10/20160419-montane_marbrees-555-CREDIT-Montane-Alex-Buisse-972x649.jpg"
+  }
+},
+{
+  "model": "events.event",
+  "pk": 14,
+  "fields": {
+    "name": "Tech Fest 2025",
+    "description": "cybersecurity",
+    "date": "2026-03-18",
+    "time": null,
+    "venue": "College Ground",
+    "image": "https://as2.ftcdn.net/v2/jpg/05/68/02/77/1000_F_568027794_pZGlO2M8m44TO1zPAaZzstBNQAS4IYJP.jpg"
+  }
+},
+{
+  "model": "events.event",
+  "pk": 15,
+  "fields": {
+    "name": "fencing ",
+    "description": "Deccan ground.",
+    "date": "2026-03-02",
+    "time": null,
+    "venue": "ground gymkhana",
+    "image": "https://images.unsplash.com/photo-1555597673-b21d5c935865?auto=format&fit=crop&w=800"
+  }
+},
+{
+  "model": "events.event",
+  "pk": 16,
+  "fields": {
+    "name": "Wrestling",
+    "description": "Competition will happen in Sports Complex",
+    "date": "2026-03-12",
+    "time": null,
+    "venue": "Sports Complex",
+    "image": "https://tse1.explicit.bing.net/th/id/OIP.r8_jl2rCDtfQFx9nOWt09AHaE7?rs=1&pid=ImgDetMain&o=7&rm=3"
+  }
+},
+{
+  "model": "events.event",
+  "pk": 17,
+  "fields": {
+    "name": "TECHATHON",
+    "description": "Event for techies",
+    "date": "2026-03-31",
+    "time": null,
+    "venue": "WALCHAND COLLEGE",
+    "image": "https://www.hkstp.org/-/media/corpsite/assets/park-life/news-and-events/news/2025/20250122-techathon/techathon-2025_3.jpg?rev=da6ff6634b35449ba3e1943b646dc11e&hash=711996A605F9E226E6C3C718521BCD7F"
+  }
+},
+{
+  "model": "events.event",
+  "pk": 18,
+  "fields": {
+    "name": "HackVerse 2026: 36-Hour National Hackathon",
+    "description": "Join 500+ top student developers, designers, and innovators to build cutting-edge AI, Web3, and Mobile solutions with mentorship from leading tech giants. Exciting cash prizes, swags, and internship opportunities!",
+    "date": "2026-12-05",
+    "time": "09:00:00",
+    "venue": "Main Auditorium & Innovation Lab",
+    "image": "https://images.unsplash.com/photo-1504384308090-c894fdcc538d?auto=format&fit=crop&w=800&q=80"
+  }
+},
+{
+  "model": "events.event",
+  "pk": 19,
+  "fields": {
+    "name": "RoboWar & Drone Grand Prix 2026",
+    "description": "Witness combat robotics battles, high-speed autonomous drone racing, and robotic arm automation challenges. Featuring teams from 30+ engineering colleges battling for the ultimate trophy.",
+    "date": "2026-12-18",
+    "time": "10:30:00",
+    "venue": "Tech Arena, Block C Ground",
+    "image": "https://images.unsplash.com/photo-1485827404703-89b55fcc595e?auto=format&fit=crop&w=800&q=80"
+  }
+},
+{
+  "model": "events.event",
+  "pk": 20,
+  "fields": {
+    "name": "Premier College Cricket Cup 2027",
+    "description": "The biggest collegiate T20 cricket tournament of the year! Cheer for your department and college teams as they battle through group stages, semi-finals, and an electrifying grand final under the floodlights.",
+    "date": "2027-01-12",
+    "time": "08:30:00",
+    "venue": "University Sports Complex Stadium",
+    "image": "https://images.unsplash.com/photo-1540747913346-19e32dc3e97e?auto=format&fit=crop&w=800&q=80"
+  }
+},
+{
+  "model": "events.event",
+  "pk": 21,
+  "fields": {
+    "name": "Pulse 2027: Mega Music & Cultural Fest",
+    "description": "Get ready for an unforgettable night of live musical performances, rock bands, celebrity DJ concerts, and cultural dance showcases. Experience stunning laser light shows, food trucks, and pure energy!",
+    "date": "2027-01-24",
+    "time": "17:00:00",
+    "venue": "Open Air Amphitheatre",
+    "image": "https://images.unsplash.com/photo-1470225620780-dba8ba36b745?auto=format&fit=crop&w=800&q=80"
+  }
+},
+{
+  "model": "events.event",
+  "pk": 22,
+  "fields": {
+    "name": "Next.js & Cloud Architecture Bootcamp",
+    "description": "A hands-on, intensive workshop on building and deploying scalable web apps using React, Next.js, Docker, and AWS Cloud. Includes live coding sessions, certificates of completion, and direct industry mentor Q&A.",
+    "date": "2026-11-28",
+    "time": "11:00:00",
+    "venue": "Seminar Hall 2, IT Department",
+    "image": "https://images.unsplash.com/photo-1517694712202-14dd9538aa97?auto=format&fit=crop&w=800&q=80"
+  }
+},
+{
+  "model": "events.event",
+  "pk": 23,
+  "fields": {
+    "name": "Slam Dunk: Inter-Collegiate Basketball Trophy",
+    "description": "High-octane collegiate basketball championship featuring fast breaks, three-pointers, and thrilling buzzer-beaters. Come support the campus varsity team as they defend their regional title!",
+    "date": "2027-02-10",
+    "time": "15:30:00",
+    "venue": "Indoor Sports Arena, Court 1",
+    "image": "https://images.unsplash.com/photo-1546519638-68e109498ffc?auto=format&fit=crop&w=800&q=80"
+  }
+},
+{
+  "model": "events.event",
+  "pk": 24,
+  "fields": {
+    "name": "GenAI & Deep Learning Masterclass",
+    "description": "Discover how to fine-tune Large Language Models, build autonomous agent pipelines, and train computer vision models with PyTorch. Guided step-by-step by visiting industry data scientists.",
+    "date": "2027-02-25",
+    "time": "10:00:00",
+    "venue": "Computer Science Advanced Computing Lab",
+    "image": "https://images.unsplash.com/photo-1526374965328-7f61d4dc18c5?auto=format&fit=crop&w=800&q=80"
+  }
+},
+{
+  "model": "events.event",
+  "pk": 25,
+  "fields": {
+    "name": "CyberShield: National Ethical Hacking Conclave",
+    "description": "An elite conference and live Capture-the-Flag (CTF) security contest addressing modern zero-day vulnerabilities, network penetration testing, and ethical hacking methodologies with industry leaders.",
+    "date": "2026-10-15",
+    "time": "09:30:00",
+    "venue": "Cyber Forensic Lab & Virtual Hall",
+    "image": "https://images.unsplash.com/photo-1550751827-4bd374c3f58b?auto=format&fit=crop&w=800&q=80"
+  }
+},
+{
+  "model": "events.event",
+  "pk": 26,
+  "fields": {
+    "name": "Natya Utsav: Inter-College Theatrical Gala",
+    "description": "A grand evening celebrating original theatrical performances, street plays (Nukkad Natak), and dramatic monologues presented by prestigious collegiate drama societies across the state.",
+    "date": "2026-11-02",
+    "time": "16:00:00",
+    "venue": "University Central Theatre",
+    "image": "https://images.unsplash.com/photo-1469488865564-c2de10f69f96?auto=format&fit=crop&w=800&q=80"
+  }
+},
+{
+  "model": "events.event",
+  "pk": 27,
+  "fields": {
+    "name": "ShutterCraft: Annual Photography Exhibition",
+    "description": "Curated showcase of over 200 award-winning photographs capturing wildlife, street candid moments, architecture, and astrophotography by talented student photographers.",
+    "date": "2026-11-14",
+    "time": "11:00:00",
+    "venue": "Fine Arts Exhibition Gallery",
+    "image": "https://images.unsplash.com/photo-1452587925148-ce544e77e70d?auto=format&fit=crop&w=800&q=80"
+  }
+}
+]

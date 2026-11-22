@@ -150,7 +150,7 @@
 
     <!-- ══════════════ NAVBAR ══════════════ -->
     <nav class="navbar navbar-expand-lg navbar-light fixed-top">
-        <div class="container">
+        <div class="container-fluid px-3 px-sm-4 px-lg-5">
             <a class="navbar-brand" href="{% url 'homepage' %}">College<span>Events</span></a>
             <!-- Animated Hamburger -->
             <button class="navbar-toggler hamburger-btn" type="button" data-toggle="collapse" data-target="#mainNav"
@@ -194,12 +194,12 @@
                             <span class="user-avatar" id="navAvatar"
                                 style="width:38px;height:38px;border-radius:50%;background:linear-gradient(135deg,#6366f1,#ec4899);color:#fff;font-weight:800;font-size:14px;display:flex;align-items:center;justify-content:center;border:2px solid rgba(255,255,255,0.3);box-shadow:0 4px 12px rgba(99,102,241,0.3);">
 
-                                {% if request.user.first_name %}
-                                {{ request.user.first_name|slice:":1"|upper }}{{ request.user.last_name|slice:":1"|upper
-                                }}
-                                {% else %}
-                                {{ request.user.username|slice:":2"|upper }}
-                                {% endif %}
+                                <!-- prettier-ignore -->
+    {% if request.user.first_name %}
+        {{ request.user.first_name|first|upper }}{{ request.user.last_name|first|upper }}
+    {% else %}
+        {{ request.user.username|make_list|slice:":2"|join:""|upper }}
+    {% endif %}
 
                             </span>
 

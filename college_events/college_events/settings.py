@@ -6,7 +6,8 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # Security settings - use environment variables
 SECRET_KEY = os.environ.get('SECRET_KEY', 'django-insecure-87rc!&=zj$()tx1mw%m^7%_82$=2^k(7=jeft2_d6jqx8nacrm')
 DEBUG = os.environ.get('DEBUG', 'True') == 'True'  # Default to True for development
-ALLOWED_HOSTS = os.environ.get('ALLOWED_HOSTS', 'localhost,127.0.0.1').split(',')
+ALLOWED_HOSTS = os.environ.get('ALLOWED_HOSTS', 'localhost,127.0.0.1,*').split(',')
+CSRF_TRUSTED_ORIGINS = ['https://*.trycloudflare.com']
 
 INSTALLED_APPS = [
     'django.contrib.admin',

@@ -6,11 +6,21 @@
 <style>
     .auth-wrapper {
         min-height: 100vh;
-        background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 50%, #ec4899 100%);
+        background: url('{% static "events/premium-students.png" %}') center/cover no-repeat fixed;
         display: flex;
         align-items: center;
         justify-content: center;
         padding: 100px 16px 60px;
+        position: relative;
+    }
+
+    .auth-wrapper::before {
+        content: '';
+        position: absolute;
+        inset: 0;
+        background: rgba(248, 250, 252, 0.88);
+        backdrop-filter: blur(10px);
+        z-index: 0;
     }
 
     .auth-card {
@@ -21,6 +31,8 @@
         width: 100%;
         max-width: 440px;
         animation: slideUp 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+        position: relative;
+        z-index: 1;
     }
 
     @keyframes slideUp {
@@ -150,6 +162,12 @@
     }
 
     /* Theme Adaptive Overrides */
+    html[data-theme="dark"] .auth-wrapper::before,
+    html[data-theme="midnight"] .auth-wrapper::before,
+    html[data-theme="forest"] .auth-wrapper::before {
+        background: rgba(15, 23, 42, 0.88);
+    }
+
     html[data-theme="dark"] .auth-card,
     html[data-theme="midnight"] .auth-card,
     html[data-theme="forest"] .auth-card {
