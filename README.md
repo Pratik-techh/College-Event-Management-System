@@ -44,21 +44,21 @@ Managing college events—from technical symposiums and coding hackathons to cul
 
 ## 📸 Screenshots
 
-### Home Section
+### 🏠 Home Section (Full-Screen Desktop Experience)
 ![Home Page](screenshots/homepage.png)
-*Modern landing page featuring glassmorphism elements, premium UI, and smooth animations.*
+*Modern edge-to-edge landing page featuring dynamic live stats, glassmorphism elements, vibrant gradients, and smooth interactive animations.*
 
-### Featured Events
+### 📅 Upcoming Events & Filter Catalog
 ![Events Section](screenshots/featured_events.png)
-*Browse and register for upcoming college events with a clean card-based layout.*
+*Browse and register for upcoming events with live countdown timers, instant search, and category filtering (Technical, Cultural, Sports, Workshop).*
 
-### Completed Events
+### 🏆 Completed Events Archive
 ![Completed Events](screenshots/completed_events.png)
-*Explore past successfully organized events showcased attractively.*
+*Explore past successfully organized college events with attendee statistics, photo showcases, and event recaps.*
 
-### Admin Panel
+### 🛡️ Admin Dashboard & Control Center
 ![Admin Panel](screenshots/admin_navigation.png)
-*Admin dashboard equipped with easy navigation for complete control over events and ticket generation.*
+*Admin dashboard equipped with easy navigation for complete control over events, registration tracking, and ticket generation.*
 
 ---
 
